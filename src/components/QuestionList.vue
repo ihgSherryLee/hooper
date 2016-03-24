@@ -1,5 +1,10 @@
 <style lang="less">
-
+  .content {
+    width: 800px;
+    .news {
+      border-bottom: 1px solid #bdbdbd;
+    }
+  }
 </style>
 
 <template>
