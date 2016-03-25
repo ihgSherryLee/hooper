@@ -2,6 +2,8 @@
   .wrap {
     margin: auto;
     width: 960px;
+  }
+  .navbar {
     height: 63px;
     line-height: 45px;
   }
