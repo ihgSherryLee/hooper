@@ -46,11 +46,51 @@
     outline: 0;
   }
   .entry-body {
+    position: relative;
     margin-top: 5px;
     .vote {
-      position: relative;
-      left: 48px;
+      position: absolute;
+      left: -48px;
+      display: none;
+      width: 40px;
+      .vote-count {
+        border: none;
+        border-radius: 2px;
+        background: rgba(204,91,91,0.4);
+        color: #d20000;
+      }
+      .vote-count:hover {
+        background: #d20000;
+        color: #fff;
+      }
     }
+    .votebar {
+      float: left;
+      margin-left: -48px;
+      width: 40px;
+      .up,.down {
+        margin-top: 10px;
+        width: 40px;
+        border: none;
+        border-radius: 2px;
+        background: rgba(204,91,91,0.4);
+        color: #d20000;
+      }
+      .up:hover,.down:hover {
+        width: 40px;
+        border: none;
+        border-radius: 2px;
+        background: #d20000;
+        color: #fff;
+      }
+    }
+  }
+  .author {
+    margin-bottom: 2px;
+  }
+  .vote-info {
+    font-size: 12px;
+    color: #ccc;
   }
 </style>
 
@@ -73,15 +113,15 @@
               <button class="vote-count">111</button>
             </div>
             <div class="votebar">
-              <button class="up" title="赞同"></button>
-              <button class="down" title="反对，不会显示你的姓名"></button>
+              <button class="up" title="赞同"><span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span><span>111</span></button>
+              <button class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></button>
             </div>
             <div class="answer-deatail">
               <div class="author">
                 <a href="#">XXX</a>,啊啊啊啊
               </div>
-              <div class="vote-info"></div>
-              <div class="answer">
+              <div class="vote-info">XXXXX,XXXX赞成</div>
+              <div class="answer summary">
                 习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
                 <span class="answer-date">发布于 2016-01-15</span>
               </div>
@@ -149,8 +189,8 @@
               <button class="vote-count">111</button>
             </div>
             <div class="votebar">
-              <button class="up" title="赞同"></button>
-              <button class="down" title="反对，不会显示你的姓名"></button>
+              <button class="up" title="赞同"><span class="glyphicon glyphicon-triangle-top"></span></button>
+              <button class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-triangle-bottom"></span></button>
             </div>
             <div class="answer-deatail">
               <div class="author">
