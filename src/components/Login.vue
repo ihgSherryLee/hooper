@@ -18,7 +18,8 @@
       line-height: 35px;
     }
   }
-  .view-signup {
+  .view-signup,.view-signin {
+    display: none;
     input {
       padding: 20px;
       line-height: 19px;
@@ -34,6 +35,9 @@
       background: rgba(204,91,91,0.4);
     }
   }
+  .selected {
+    display: block;
+  }
 </style>
 
 <template>
@@ -41,11 +45,11 @@
     <div class="title">HOOPER</div>
     <div class="tab-nav">
       <div class="nav-slide">
-        <a href="#singup" class="active">注册</a>
-        <a href="#singin">登录</a>
+        <a href="#singup" class="active" @click="changeTab('signup')">注册</a>
+        <a href="#singin" @click="changeTab('signin')">登录</a>
       </div>
     </div>
-    <div class="view view-signup selected">
+    <div class="view view-signup" :class="select == 'signup' ? selected : ''">
       <form class="signup-form">
         <input type="text" class="form-control" name="fullname" placeholder="姓名">
         <input type="text" class="form-control" name="email" placeholder="邮箱">
@@ -53,19 +57,29 @@
         <button class="sign-btn submit" type="submit">注册</button>
       </form>
     </div>
+    <div class="view view-signin" v-bind:class="select === 'signin' ? selected : ''">
+      <form class="signin-form">
+        <input type="text" class="form-control" name="account" placeholder="手机号或邮箱">
+        <input type="password" class="form-control" placeholder="密码">
+        <button class="sign-btn submit" type="submit">登录</button>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      // note: changing this line won't causes changes
-      // with hot-reload because the reloaded component
-      // preserves its current state and we are modifying
-      // its initial state.
-      msg: 'Hello World!'
+  module.exports = {
+    data: function () {
+      return {
+        select: ''
+      }
+    },
+    methods: {
+      changeTab: function (tab) {
+        var self = this
+        self.select = tab
+        console.log(tab)
+      }
     }
   }
-}
 </script>
