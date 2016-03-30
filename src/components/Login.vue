@@ -45,11 +45,11 @@
     <div class="title">HOOPER</div>
     <div class="tab-nav">
       <div class="nav-slide">
-        <a href="#singup" class="active" @click="changeTab('signup')">注册</a>
-        <a href="#singin" @click="changeTab('signin')">登录</a>
+        <a href="#singup" class="active" @click="changeSignupTab">注册</a>
+        <a href="#singin" @click="changeSigninTab">登录</a>
       </div>
     </div>
-    <div class="view view-signup" :class="select == 'signup' ? selected : ''">
+    <div class="view view-signup" :class="{'selected': signup}">
       <form class="signup-form">
         <input type="text" class="form-control" name="fullname" placeholder="姓名">
         <input type="text" class="form-control" name="email" placeholder="邮箱">
@@ -57,7 +57,7 @@
         <button class="sign-btn submit" type="submit">注册</button>
       </form>
     </div>
-    <div class="view view-signin" v-bind:class="select === 'signin' ? selected : ''">
+    <div class="view view-signin" :class="{'selected': signin}">
       <form class="signin-form">
         <input type="text" class="form-control" name="account" placeholder="手机号或邮箱">
         <input type="password" class="form-control" placeholder="密码">
@@ -71,14 +71,20 @@
   module.exports = {
     data: function () {
       return {
-        select: ''
+        signin: false,
+        signup: true
       }
     },
     methods: {
-      changeTab: function (tab) {
+      changeSignupTab: function () {
         var self = this
-        self.select = tab
-        console.log(tab)
+        self.signup = true
+        self.signin = false
+      },
+      changeSigninTab: function () {
+        var self = this
+        self.signin = true
+        self.signup = false
       }
     }
   }
