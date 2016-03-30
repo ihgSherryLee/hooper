@@ -51,16 +51,16 @@
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
       <form class="signup-form">
-        <input type="text" class="form-control" name="fullname" placeholder="姓名">
-        <input type="text" class="form-control" name="email" placeholder="邮箱">
-        <input type="password" class="form-control" placeholder="密码（不少于6位数字）">
-        <button class="sign-btn submit" type="submit">注册</button>
+        <input type="text" class="form-control" name="fullname" v-module="fullname" placeholder="姓名">
+        <input type="text" class="form-control" name="email" v-module="email" placeholder="邮箱">
+        <input type="password" class="form-control" v-module="password" placeholder="密码（不少于6位数字）">
+        <button class="sign-btn submit" type="submit" @click="signupSubmit">注册</button>
       </form>
     </div>
     <div class="view view-signin" :class="{'selected': signin}">
       <form class="signin-form">
-        <input type="text" class="form-control" name="account" placeholder="手机号或邮箱">
-        <input type="password" class="form-control" placeholder="密码">
+        <input type="text" class="form-control" name="account" v-module="account" placeholder="手机号或邮箱">
+        <input type="password" class="form-control" v-module="password" placeholder="密码">
         <button class="sign-btn submit" type="submit">登录</button>
       </form>
     </div>
@@ -72,7 +72,11 @@
     data: function () {
       return {
         signin: false,
-        signup: true
+        signup: true,
+        fullname: '',
+        email: '',
+        password: '',
+        account: ''
       }
     },
     methods: {
@@ -85,6 +89,9 @@
         var self = this
         self.signin = true
         self.signup = false
+      },
+      signupSubmit: function () {
+
       }
     }
   }
