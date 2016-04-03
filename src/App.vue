@@ -1,25 +1,21 @@
 <template>
-  <!-- <div id="app">
-    <globle-header></globle-header>
+  <div id="app">
     <main>
       <router-view></router-view>
     </main>
-  </div> -->
-  <div id="app">
-    <hooper-login></hooper-login>
   </div>
 </template>
 
 <script>
 // import GlobleHeader from './components/GlobleHeader'
-import HooperLogin from './components/Login'
+// import HooperLogin from './components/Login'
 
-export default {
-  components: {
-    // GlobleHeader,
-    HooperLogin
-  }
-}
+// export default {
+//   components: {
+//     // GlobleHeader,
+//     HooperLogin
+//   }
+// }
 </script>
 
 <style>
