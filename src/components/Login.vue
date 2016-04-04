@@ -69,6 +69,9 @@
 </template>
 
 <script>
+  import Vue from 'Vue'
+  import VueResource from 'Vue-sesource'
+
   module.exports = {
     data: function () {
       return {
@@ -93,6 +96,7 @@
       },
       signup: function () {
         var self = this
+        this.$http.post()
         window.alert(self.fullname)
         window.alert('msg')
       },
