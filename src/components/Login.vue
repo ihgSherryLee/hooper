@@ -45,8 +45,8 @@
     <div class="title">HOOPER</div>
     <div class="tab-nav">
       <div class="nav-slide">
-        <a href="#singup" class="active" @click="changeSignupTab">注册</a>
-        <a href="#singin" @click="changeSigninTab">登录</a>
+        <a href="#" class="active" @click="changeSignupTab">注册</a>
+        <a href="#" @click="changeSigninTab">登录</a>
       </div>
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
@@ -70,7 +70,8 @@
 
 <script>
   import Vue from 'Vue'
-  import VueResource from 'Vue-sesource'
+  import VueResource from 'Vue-resource'
+  Vue.use(VueResource)
 
   module.exports = {
     data: function () {
@@ -96,12 +97,25 @@
       },
       signup: function () {
         var self = this
-        this.$http.post()
+        var data = {}
+        data.fullname = self.fullname
+        data.email = self.email
+        data.password = self.password
+        console.log(data)
+        Vue.$http.post('login.js', data).then(function () {
+
+        }, function () {
+
+        })
         window.alert(self.fullname)
-        window.alert('msg')
+        window.alert(data)
       },
       signin: function () {
-
+        var self = this
+        var data = {}
+        data.account = self.account
+        data.password = self.password
+        console.log(data)
       }
     }
   }
