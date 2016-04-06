@@ -54,15 +54,15 @@
         <input type="text" class="form-control" name="fullname" v-model="fullname" placeholder="姓名">
         <input type="text" class="form-control" name="email" v-model="email" placeholder="邮箱">
         <input type="password" class="form-control" v-model="password" placeholder="密码（不少于6位数字）">
-        <button  class="sign-btn submit" @click="signup">注册</button>
-        <a href="#" <a href="#" v-link="{path:'index'}">aa</a>
+        <button class="sign-btn" @click="signUp">注册</button>
+        <a href="#" v-link="{path:'index'}">aa</a>
       </form>
     </div>
     <div class="view view-signin" :class="{'selected': signin}">
       <form class="signin-form">
         <input type="text" class="form-control" name="account" v-model="account" placeholder="手机号或邮箱">
         <input type="password" class="form-control" v-model="password" placeholder="密码">
-        <button class="sign-btn submit" @click="signin">登录</button>
+        <button class="sign-btn submit" @click="signIn">登录</button>
       </form>
     </div>
   </div>
@@ -95,22 +95,22 @@
         self.signin = true
         self.signup = false
       },
-      signup: function () {
+      signUp: function () {
         var self = this
         var data = {}
         data.fullname = self.fullname
         data.email = self.email
         data.password = self.password
         console.log(data)
-        Vue.$http.post('login.js', data).then(function () {
-
+        window.alert(self.fullname)
+        window.alert(data)
+        Vue.http.post('login.js', data).then(function () {
+          console.log(111)
         }, function () {
 
         })
-        window.alert(self.fullname)
-        window.alert(data)
       },
-      signin: function () {
+      signIn: function () {
         var self = this
         var data = {}
         data.account = self.account
