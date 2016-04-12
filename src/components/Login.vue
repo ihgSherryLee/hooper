@@ -50,13 +50,13 @@
       </div>
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
-      <form class="signup-form">
+      <!-- <form class="signup-form"> -->
         <input type="text" class="form-control" name="fullname" v-model="fullname" placeholder="姓名">
         <input type="text" class="form-control" name="email" v-model="email" placeholder="邮箱">
         <input type="password" class="form-control" v-model="password" placeholder="密码（不少于6位数字）">
         <button class="sign-btn" @click="signUp">注册</button>
         <a href="#" v-link="{path:'index'}">aa</a>
-      </form>
+      <!-- </form> -->
     </div>
     <div class="view view-signin" :class="{'selected': signin}">
       <form class="signin-form">
@@ -101,11 +101,8 @@
         data.fullname = self.fullname
         data.email = self.email
         data.password = self.password
-        console.log(data)
-        window.alert(self.fullname)
-        window.alert(data)
-        Vue.http.post('login.js', data).then(function () {
-          console.log(111)
+        Vue.http.post('/api/signUp', data).then(function (response) {
+          console.log(response)
         }, function () {
 
         })

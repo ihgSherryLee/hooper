@@ -10,7 +10,7 @@ var compiler = webpack(config)
 // https://github.com/chimurai/http-proxy-middleware
 var proxyTable = {
   '/api': {
-    target: 'http://localhost:8080',
+    target: 'http://localhost:8083',
     changeOrigin: true,
     pathRewrite: {
       '^/api': ''

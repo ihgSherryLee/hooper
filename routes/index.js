@@ -1,4 +1,18 @@
-var server = require("./server");
-var router = require("./router");
+function signIn(req, res) {
 
-server.start(router.route);
+}
+
+function signUp(req, res) {
+  console.log(req.data)
+  res.send(data);
+}
+
+module.exports = function (app) {
+  app.get('/', function (req, res) {
+    res.send('Hello world');
+  });
+  app.get('/signIn', function (req, res) {
+    res.send('Hello world');
+  });
+  app.post('/signUp', signUp);
+};
