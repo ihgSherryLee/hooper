@@ -3,8 +3,8 @@ function signIn(req, res) {
 }
 
 function signUp(req, res) {
-  console.log(req.data)
-  res.send(data);
+  console.log(req.body)
+  res.send(req.body);
 }
 
 module.exports = function (app) {
