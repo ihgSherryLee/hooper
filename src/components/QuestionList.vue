@@ -1,4 +1,8 @@
 <style lang="less">
+  .main-wrap {
+    margin: auto;
+    width: 960px;
+  }
   .main-content-inner {
     width: 700px;
     .news {
@@ -95,7 +99,7 @@
 </style>
 
 <template>
-  <div class="main wrap">
+  <div class="main-wrap">
     <div class="main-content-inner">
       <div class="news">最新动态</div>
       <div class="news-list-detail first">

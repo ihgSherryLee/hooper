@@ -55,7 +55,7 @@
         <input type="text" class="form-control" name="email" v-model="email" placeholder="邮箱">
         <input type="password" class="form-control" v-model="password" placeholder="密码（不少于6位数字）">
         <button class="sign-btn" @click="signUp">注册</button>
-        <a href="#" v-link="{path:'index'}">aa</a>
+        <a v-link="{'path':'/index/questionList'}">aa</a>
       <!-- </form> -->
     </div>
     <div class="view view-signin" :class="{'selected': signin}">

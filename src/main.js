@@ -7,23 +7,21 @@ Vue.use(VueRouter)
 // Vue.http.options.emulateJSON = true
 var router = new VueRouter()
 
-import Header from './components/GlobleHeader'
+// import Header from './components/GlobleHeader'
 import QuestionList from './components/QuestionList'
-import Login from './components/Login'
+import Index from './views/Index'
+import Login from './views/Login'
 router.map({
-  '/': {
-    component: Login,
-    subRoutes: {
-      '/index': {
-        component: [QuestionList, Header]
-      }
-      // '/details': {
-      //   component: QuestionArticle
-      // }
-    }
+  '/login': {
+    component: Login
   },
   '/index': {
-    component: QuestionList
+    component: Index,
+    subRoutes: {
+      '/': {
+        component: QuestionList
+      }
+    }
   }
   // '/search/time/:time': {
   //   component: browseMode,

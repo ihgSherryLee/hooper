@@ -1,5 +1,5 @@
 <style lang="less">
-  .wrap {
+  .nav-wrap {
     margin: auto;
     width: 960px;
   }
@@ -55,7 +55,7 @@
 
 <template>
   <nav class="navbar navbar-default" role="navigation">
-    <div class="wrap">
+    <div class="nav-wrap">
       <div class="navbar-header">HOOPER</div>
       <div>
         <form action="" class="navbar-form" role="search">
