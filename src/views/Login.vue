@@ -45,8 +45,8 @@
     <div class="title">HOOPER</div>
     <div class="tab-nav">
       <div class="nav-slide">
-        <a href="#" class="active" @click="changeSignupTab">注册</a>
-        <a href="#" @click="changeSigninTab">登录</a>
+        <a class="active" @click="changeSignupTab">注册</a>
+        <a @click="changeSigninTab">登录</a>
       </div>
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
@@ -113,6 +113,11 @@
         data.account = self.account
         data.password = self.password
         console.log(data)
+        Vue.http.post('/api/signIn', data).then(function (response) {
+          console.log(response)
+        }, function () {
+
+        })
       }
     }
   }
