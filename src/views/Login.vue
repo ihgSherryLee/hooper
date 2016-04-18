@@ -5,11 +5,13 @@
     width: 300px;
   }
   .title {
+    width: 300px;
     font-size: 40px;
     text-align: center;
   }
   .tab-nav {
     margin-bottom: 10px;
+    width: 300px;
     font-size: 18px;
     text-align: center;
     .nav-slide a {
@@ -20,6 +22,7 @@
   }
   .view-signup,.view-signin {
     display: none;
+    width: 450px;
     input {
       padding: 20px;
       line-height: 19px;
@@ -28,7 +31,7 @@
     }
     .sign-btn {
       margin-top: 20px;
-      width: 100%;
+      width: 300px;
       line-height: 41px;
       border: none;
       border-radius: 3px;
@@ -37,6 +40,15 @@
   }
   .selected {
     display: block;
+  }
+  .input {
+    display: inline-block;
+    width: 300px;
+  }
+  .tip {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #fc6161;
   }
 </style>
 
@@ -51,9 +63,9 @@
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
       <!-- <form class="signup-form"> -->
-        <input type="text" class="form-control" name="fullname" v-model="fullname" placeholder="姓名">
-        <input type="text" class="form-control" name="email" v-model="email" placeholder="邮箱">
-        <input type="password" class="form-control" v-model="password" placeholder="密码（不少于6位数字）">
+        <input type="text" class="form-control input" name="fullname" v-model="fullname" @blur="checkFullname" placeholder="姓名"><span class="tip">{{tips.fullname}}</span>
+        <input type="text" class="form-control input" name="email" v-model="email" @blur="checkEmail" placeholder="邮箱"><span class="tip">{{tips.email}}</span>
+        <input type="password" class="form-control input" v-model="password" placeholder="密码（不少于6位数字）"><span class="tip">{{tips.password}}</span>
         <button class="sign-btn" @click="signUp">注册</button>
         <a v-link="{'path':'/index/questionList'}">aa</a>
       <!-- </form> -->
@@ -81,7 +93,11 @@
         fullname: '',
         email: '',
         password: '',
-        account: ''
+        account: '',
+        tips: {
+          fullname: '姓名不能为空',
+          email: '邮箱不能为空'
+        }
       }
     },
     methods: {
@@ -94,6 +110,27 @@
         var self = this
         self.signin = true
         self.signup = false
+      },
+      checkFullname: function () {
+        var self = this
+        if (!self.fullname) {
+          self.tips.fullname = '姓名不能为空'
+        } else if (self.fullname.length < 4) {
+          self.tips.fullname = '请输入多于4个字符'
+        } else {
+          self.tips.fullname = ''
+        }
+      },
+      checkEmail: function () {
+        var self = this
+        var reg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+        if (!self.email) {
+          self.tips.email = '邮箱不能为空'
+        } else if (!reg.test(self.email)) {
+          self.tips.email = '请输入正确格式的邮箱'
+        } else {
+          self.tips.email = ''
+        }
       },
       signUp: function () {
         var self = this
