@@ -132,6 +132,17 @@
           self.tips.email = ''
         }
       },
+      checkPassword: function () {
+        var self = this
+        var reg = /^[a-zA-Z]\w{5,15}$/
+        if (!self.password) {
+          self.tips.email = '密码不能为空'
+        } else if (!reg.test(self.email)) {
+          self.tips.email = '请输入正确格式的邮箱'
+        } else {
+          self.tips.email = ''
+        }
+      },
       signUp: function () {
         var self = this
         var data = {}
