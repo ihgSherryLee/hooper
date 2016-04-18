@@ -18,8 +18,18 @@ function signIn(req, res) {
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
     console.log(rows[0])
+    if (!rows[0]) res.send({
+      status: false,
+      tips: '账户不存在,请重新输入'
+    })
+    else if (rows[0].password !== password) res.send({
+      status: false,
+      tips: '密码错误,请重新输入'
+    })
+    else res.send({
+      status: true
+    })
   });
-  res.send(req.body);
 }
 
 function signUp(req, res) {

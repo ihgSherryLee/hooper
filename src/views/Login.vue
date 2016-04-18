@@ -82,8 +82,12 @@
 
 <script>
   import Vue from 'Vue'
+  import VueRouter from 'vue-router'
   import VueResource from 'Vue-resource'
+  Vue.use(VueRouter)
   Vue.use(VueResource)
+
+  var router = new VueRouter()
 
   module.exports = {
     data: function () {
@@ -162,6 +166,11 @@
         data.password = self.password
         console.log(data)
         Vue.http.post('/api/signIn', data).then(function (response) {
+          if (!response.data.status) {
+            window.alert(response.data.tips)
+          } else {
+            router.go('/index')
+          }
           console.log(response)
         }, function () {
 
