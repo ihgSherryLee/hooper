@@ -1,20 +1,28 @@
 <style lang="less">
+  .profile-inner {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    .profile-form {
+      padding: 24px 12px;
+      border-bottom: 1px solid #ccc;
+      clear: both;
+      .profile-item-content {
+        float: left;
+      }
+    }
+  }
 </style>
 
 <template>
   <globle-header></globle-header>
   <div class="main-wrap">
-    <div class="main-content-inner">
-      <h5>编辑个人资料</h5>
+    <div class="main-content-inner profile-inner">
+      <div class="profile-form">编辑个人资料</div>
       <div class="profile-form">
         <div class="profile-item">
-          <span>性别</span>
+          <span>头像</span>
           <div class="profile-item-content">
-            <div class="profile-item-content-static">填写</div>
-            <div class="profile-item-content-edit">
-              <input type="radio" name="gender">男
-              <input type="radio" name="gender">女
-            </div>
+            <img src="">
           </div>
         </div>
       </div>

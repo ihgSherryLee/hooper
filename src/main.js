@@ -11,6 +11,7 @@ var router = new VueRouter()
 import QuestionList from './components/QuestionList'
 import Index from './views/Index'
 import Login from './views/Login'
+import Profile from './views/Profile'
 router.map({
   '/login': {
     component: Login
@@ -22,6 +23,9 @@ router.map({
         component: QuestionList
       }
     }
+  },
+  'profile': {
+    component: Profile
   }
   // '/search/time/:time': {
   //   component: browseMode,
