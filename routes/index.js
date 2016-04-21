@@ -41,10 +41,19 @@ function signUp(req, res) {
   var query = 'INSERT INTO users(email,userId,password) VALUE ("' + email + '","' + fullname + '","' + password + '")'
   console.log(query)
   connection.query(query, function(err, rows, fields) {
-  if (err) throw err;
-
-});
+    if (err) throw err;
+  });
   res.send(req.body);
+}
+
+function queryUser (req, res) {
+  var data = req.body
+  var account = data.account
+  var query = 'SELECT * FROM users WHERE email = "' + account + '"'
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    res.send(rows[0])
+  });
 }
 
 module.exports = function (app) {
@@ -53,4 +62,5 @@ module.exports = function (app) {
   });
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
+  app.post('/queryUser', queryUser);
 };

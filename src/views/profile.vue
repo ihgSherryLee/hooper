@@ -43,7 +43,7 @@
       <div class="profile-item">
         <span class="item-title">一句话介绍</span>
         <div class="profile-item-content">
-          <div v-show="!show.headline" class="profile-item-content-static"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>填写</div>
+          <div v-show="!show.headline" class="profile-item-content-static"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 填写</div>
           <div v-show="show.headline" class="profile-item-content-edit">
             <input type="text" name="headline">
           </div>
@@ -64,6 +64,20 @@
 
 <script>
   import GlobleHeader from './../components/GlobleHeader'
+
+  // function getCookie (name) {
+  //   if (document.cookie.length > 0) {
+  //     var c_start = document.cookie.indexOf(name + '=')
+  //     var c_end
+  //     if (c_start !== -1) {
+  //       c_start = c_start + name.length + 1
+  //       c_end = document.cookie.indexOf(';', c_start)
+  //       if (c_end === -1) c_end = document.cookie.length
+  //       return unescape(document.cookie.substring(c_start, c_end))
+  //     }
+  //   }
+  //   return ''
+  // }
 
   module.exports = {
     data: function () {

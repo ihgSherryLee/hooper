@@ -24,8 +24,9 @@ router.map({
       }
     }
   },
-  'profile': {
-    component: Profile
+  '/profile': {
+    component: Profile,
+    name: 'profile'
   }
   // '/search/time/:time': {
   //   component: browseMode,

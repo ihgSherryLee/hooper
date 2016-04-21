@@ -89,6 +89,12 @@
 
   var router = new VueRouter()
 
+  function setCookie (name, value, expiredays) {
+    var exdate = new Date()
+    exdate.setDate(exdate.getDate() + expiredays)
+    document.cookie = name + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
+  }
+
   module.exports = {
     data: function () {
       return {
@@ -154,7 +160,8 @@
         data.email = self.email
         data.password = self.password
         Vue.http.post('/api/signUp', data).then(function (response) {
-          console.log(response)
+          setCookie('account', data.account, 7)
+          router.go('/profile')
         }, function () {
 
         })
@@ -169,6 +176,7 @@
           if (!response.data.status) {
             window.alert(response.data.tips)
           } else {
+            setCookie('account', data.account, 7)
             router.go('/index')
           }
           console.log(response)

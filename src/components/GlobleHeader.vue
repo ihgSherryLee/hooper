@@ -69,8 +69,8 @@
       </div>
       <div class="dropdown profile">
         <a href="#" class="user-info">
-          <span class="user-name">XXX</span>
-          <img class="user-img" src="">
+          <span class="user-name">{{user}}</span>
+          <img class="user-img" src="{{userImg}}">
         </a>
         <ul class="dropdown-menu dropdown-menu-right">
           <li><a href="#">我的主页</a></li>
@@ -82,15 +82,41 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      // note: changing this line won't causes changes
-      // with hot-reload because the reloaded component
-      // preserves its current state and we are modifying
-      // its initial state.
-      msg: 'Hello World!'
+  import Vue from 'Vue'
+  import VueResource from 'Vue-resource'
+  Vue.use(VueResource)
+
+  function getCookie (name) {
+    if (document.cookie.length > 0) {
+      var c_start = document.cookie.indexOf(name + '=')
+      var c_end
+      if (c_start !== -1) {
+        c_start = c_start + name.length + 1
+        c_end = document.cookie.indexOf(';', c_start)
+        if (c_end === -1) c_end = document.cookie.length
+        return unescape(document.cookie.substring(c_start, c_end))
+      }
+    }
+    return ''
+  }
+  export default {
+    data: function () {
+      return {
+        user: '',
+        userImg: ''
+      }
+    },
+    ready: function () {
+      var self = this
+      var account = getCookie('account')
+      var data = {}
+      data.account = account
+      console.log(account)
+      Vue.http.post('/api/queryUser', data).then(function (response) {
+        self.user = response.data.userId
+        self.userImg = response.data.userImg
+      }, function () {
+      })
     }
   }
-}
 </script>
