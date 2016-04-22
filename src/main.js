@@ -5,7 +5,9 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 // Vue.http.options.emulateJSON = true
-var router = new VueRouter()
+var router = new VueRouter({
+  history: true
+})
 
 // import Header from './components/GlobleHeader'
 import QuestionList from './components/QuestionList'
@@ -28,21 +30,5 @@ router.map({
     component: Profile,
     name: 'profile'
   }
-  // '/search/time/:time': {
-  //   component: browseMode,
-  //   subRoutes: {
-  //     '/': {
-  //       component: blogList
-  //     }
-  //   }
-  // },
-  // '/search/title/:title': {
-  //   component: browseMode,
-  //   subRoutes: {
-  //     '/': {
-  //       component: blogList
-  //     }
-  //   }
-  // },
 })
 router.start(App, 'app')

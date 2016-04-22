@@ -27,6 +27,12 @@ module.exports = merge(baseConfig, {
     })
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      '$': 'jquery',
+      'jQuery': 'jquery',
+      'window.jquery': 'jquery',
+      'Vue': 'Vue'
+    }),
     // http://vuejs.github.io/vue-loader/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': {

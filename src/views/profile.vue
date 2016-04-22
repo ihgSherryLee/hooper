@@ -14,6 +14,11 @@
       }
       .profile-item-content {
         padding-left: 140px;
+        .profile-item-content-static {
+          a {
+
+          }
+        }
       }
     }
   }
@@ -33,27 +38,34 @@
       <div class="profile-item">
         <span class="item-title">性别</span>
         <div class="profile-item-content">
-          <div v-show="!show.gender" class="profile-item-content-static"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>填写</div>
-          <div v-show="show.gender" class="profile-item-content-edit">
-            <input type="radio" name="gender">男
-            <input type="radio" name="gender">女
+          <div v-show="!show.gender" class="profile-item-content-static">{{gender}}&nbsp;&nbsp;<a @click="showEdit('gender')"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 修改</a></div>
+          <div v-else class="profile-item-content-edit">
+            <div class="input-wrap">
+              <input type="radio" name="gender">男
+              <input type="radio" name="gender">女
+            </div>
+            <div class="btn-wrap">
+              <button>保存</button>
+              <button>取消</button>
+            </div>
           </div>
         </div>
       </div>
       <div class="profile-item">
         <span class="item-title">一句话介绍</span>
         <div class="profile-item-content">
-          <div v-show="!show.headline" class="profile-item-content-static"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 填写</div>
-          <div v-show="show.headline" class="profile-item-content-edit">
+          <div v-show="!show.headline" class="profile-item-content-static">{{headline}}&nbsp;&nbsp;<a><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 修改</a></div>
+
+          <div v-else class="profile-item-content-edit">
             <input type="text" name="headline">
           </div>
         </div>
       </div>
       <div class="profile-item">
         <span class="item-title">个人简介</span>
-        <div v-show="!show.descrition" class="profile-item-content">
-          <div class="profile-item-content-static"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>填写</div>
-          <div v-show="show.descrition" class="profile-item-content-edit">
+        <div class="profile-item-content">
+          <div v-show="!show.description" class="profile-item-content-static">{{description}}<a><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 填写</a></div>
+          <div v-else class="profile-item-content-edit">
             <textarea name="descrition"></textarea>
           </div>
         </div>
@@ -82,14 +94,22 @@
   module.exports = {
     data: function () {
       return {
+        userImg: '',
+        gender: '女',
+        headline: '111',
+        description: '1111',
         show: {
-          gender: true,
+          gender: false,
           headline: false,
-          descrition: false
+          description: false
         }
       }
     },
     methods: {
+      showEdit: function (val) {
+        var self = this
+        self.show[val] = true
+      }
     },
     components: {
       GlobleHeader

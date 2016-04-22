@@ -46,6 +46,15 @@ module.exports = {
         loader: 'babel',
         include: projectRoot,
         exclude: /node_modules/
+      },,
+      {
+        test: /\.js$/,
+        loader: 'imports',
+        exclude: /node_modules/
+      },
+      {
+        test : /\/libs\/plugins\/jquery\/*.js$/,
+        loader : 'imports?jQuery=jquery,$=jquery,this=>window'
       },
       {
         test: /\.json$/,
