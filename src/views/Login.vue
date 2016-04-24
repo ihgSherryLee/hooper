@@ -84,16 +84,11 @@
   import Vue from 'Vue'
   import VueRouter from 'vue-router'
   import VueResource from 'Vue-resource'
+  import './../assets/scripts/cookie.js'
   Vue.use(VueRouter)
   Vue.use(VueResource)
 
   var router = new VueRouter()
-
-  function setCookie (name, value, expiredays) {
-    var exdate = new Date()
-    exdate.setDate(exdate.getDate() + expiredays)
-    document.cookie = name + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
-  }
 
   module.exports = {
     data: function () {

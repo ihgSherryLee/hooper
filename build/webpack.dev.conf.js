@@ -17,6 +17,12 @@ module.exports = merge(baseConfig, {
     publicPath: '/'
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      '$': 'jquery',
+      'jQuery': 'jquery',
+      'window.jquery': 'jquery',
+      'Vue': 'Vue'
+    }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),

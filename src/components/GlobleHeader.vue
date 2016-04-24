@@ -113,8 +113,9 @@
       data.account = account
       console.log(account)
       Vue.http.post('/api/queryUser', data).then(function (response) {
-        self.user = response.data.userId
-        self.userImg = response.data.userImg
+        self.user = response.data.name
+        self.userImg = response.data.img
+        console.log(response.data)
       }, function () {
       })
     }

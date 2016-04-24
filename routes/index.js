@@ -48,19 +48,36 @@ function signUp(req, res) {
 
 function queryUser (req, res) {
   var data = req.body
+  var resData = {}
   var account = data.account
   var query = 'SELECT * FROM users WHERE email = "' + account + '"'
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
-    res.send(rows[0])
+    resData.name = rows[0].userId
+    resData.img = rows[0].userImg
+    resData.gender = rows[0].gender
+    resData.headline = rows[0].headline
+    resData.description = rows[0].description
+
+    res.send(resData)
+  });
+}
+
+function changeUserInfo (req, res) {
+  var data = req.body
+  var account = data.account
+  var query = 'UPDATE users SET ' + data.key + '= "' + data.val + '" WHERE email = "' + data.account + '"'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({status: true})
   });
 }
 
 module.exports = function (app) {
-  app.get('/', function (req, res) {
-    res.send('Hello world');
-  });
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
   app.post('/queryUser', queryUser);
+  app.post('/changeUserInfo', changeUserInfo);
 };

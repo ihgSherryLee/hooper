@@ -14,6 +14,7 @@ import QuestionList from './components/QuestionList'
 import Index from './views/Index'
 import Login from './views/Login'
 import Profile from './views/Profile'
+import Topic from './views/Topic'
 router.map({
   '/login': {
     component: Login
@@ -29,6 +30,9 @@ router.map({
   '/profile': {
     component: Profile,
     name: 'profile'
+  },
+  '/topic': {
+    component: Topic
   }
 })
 router.start(App, 'app')
