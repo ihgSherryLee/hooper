@@ -75,9 +75,34 @@ function changeUserInfo (req, res) {
   });
 }
 
+function getTopic (req, res) {
+  var data = req.body
+  var account = data.account
+  var topicCat = data.topicCat
+  var query = 'SELECT * FROM topics WHERE topicCat = "' + topicCat + '"'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
+function getTopicCat (req, res) {
+  var query = 'SELECT DISTINCT topicCat FROM topics'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
   app.post('/queryUser', queryUser);
   app.post('/changeUserInfo', changeUserInfo);
+  app.post('/getTopic', getTopic);
+  app.get('/getTopicCat', getTopicCat);
 };

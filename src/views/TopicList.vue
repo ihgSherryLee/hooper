@@ -5,6 +5,7 @@
   }
   .topic-cat {
     padding: 10px 0 8px 0;
+    clear: both;
     li {
       float: left;
       margin: 0 10px 10px 0;
@@ -54,14 +55,14 @@
       <div class="topic-title">话题广场</div>
       <div class="topic-cat">
         <ul>
-          <li class="topic-cat-item" v-for="item in topicCats"><a href="">{{item.name}}</a></li>
+          <li class="topic-cat-item" v-for="item in topicCats"><a @click="showTopic(item.topicCat)">{{item.topicCat}}</a></li>
         </ul>
       </div>
       <div class="topic-list">
         <div class="topic-item" v-for="item in topics">
           <a v-link="{name: 'topic', params: {topicId: item.Id}}">
             <img src="" alt="">
-            <strong>{{item.name}}</strong>
+            <strong>{{item.topicName}}</strong>
           </a>
           <p>{{item.description}}</p>
           <a v-if="!item.followed" class="follow" href="" @click="unfollow"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
@@ -79,70 +80,24 @@
   module.exports = {
     data: function () {
       return {
-        topicCats: [
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          }
-        ],
-        topics: [
-          {
-            Id: 111,
-            name: '体育',
-            description: '111',
-            followed: true
-          },
-          {
-            Id: 111,
-            name: '体育',
-            description: '111',
-            followed: true
-          },
-          {
-            Id: 111,
-            name: '体育',
-            description: '111',
-            followed: true
-          },
-          {
-            Id: 111,
-            name: '体育',
-            description: '111',
-            followed: true
-          },
-          {
-            Id: 111,
-            name: '体育',
-            description: '111',
-            followed: true
-          },
-          {
-            Id: 111,
-            name: '体育',
-            description: '111',
-            followed: false
-          }
-        ]
+        topicCats: [],
+        topics: []
       }
     },
     methods: {
       follow: function () {
       },
       unfollow: function () {
+      },
+      showTopic: function (topicCat) {
+        var self = this
+        var data = {}
+        data.topicCat = topicCat
+        Vue.http.post('/api/getTopic', data).then(function (response) {
+          console.log(response.data)
+          self.topics = response.data.data
+        }, function () {
+        })
       }
     },
     components: {
@@ -154,15 +109,12 @@
       var data = {}
       data.account = account
       console.log(account)
-      Vue.http.post('/api/getAllTopic', data).then(function (response) {
+      Vue.http.get('/api/getTopicCat').then(function (response) {
         console.log(response.data)
-        self.userName = response.data.userId
-        self.userImg = response.data.userImg
-        self.gender = response.data.gender
-        self.headline = response.data.headline
-        self.description = response.data.description
+        self.topicCats = response.data.data
       }, function () {
       })
+      self.showTopic('篮球')
     }
   }
 </script>
