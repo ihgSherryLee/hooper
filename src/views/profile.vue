@@ -105,20 +105,7 @@
 
 <script>
   import GlobleHeader from './../components/GlobleHeader'
-  import './../assets/scripts/cookie.js'
-  function getCookie (name) {
-    if (document.cookie.length > 0) {
-      var c_start = document.cookie.indexOf(name + '=')
-      var c_end
-      if (c_start !== -1) {
-        c_start = c_start + name.length + 1
-        c_end = document.cookie.indexOf(';', c_start)
-        if (c_end === -1) c_end = document.cookie.length
-        return unescape(document.cookie.substring(c_start, c_end))
-      }
-    }
-    return ''
-  }
+  import cookie from './../assets/scripts/cookie.js'
 
   module.exports = {
     data: function () {
@@ -170,7 +157,7 @@
     },
     ready: function () {
       var self = this
-      var account = getCookie('account')
+      var account = cookie.getCookie('account')
       var data = {}
       data.account = account
       console.log(account)
