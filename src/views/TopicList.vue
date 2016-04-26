@@ -5,7 +5,6 @@
   }
   .topic-cat {
     padding: 10px 0 8px 0;
-    clear: both;
     li {
       float: left;
       margin: 0 10px 10px 0;
@@ -54,8 +53,12 @@
     <div class="main-content-inner">
       <div class="topic-title">话题广场</div>
       <div class="topic-cat">
-        <ul>
-          <li class="topic-cat-item" v-for="item in topicCats"><a @click="showTopic(item.topicCat)">{{item.topicCat}}</a></li>
+        <ul class="clearfix">
+          <li class="topic-cat-item"><a href="#篮球">tiyu</a></li>
+          <li class="topic-cat-item"><a>tiyu</a></li>
+          <li class="topic-cat-item"><a>tiyu</a></li>
+          <li class="topic-cat-item"><a>tiyu</a></li>
+          <li class="topic-cat-item" v-for="item in topicCats"><a href="#{{item.topicCat}}" @click="showTopic(item.topicCat)">{{item.topicCat}}</a></li>
         </ul>
       </div>
       <div class="topic-list">

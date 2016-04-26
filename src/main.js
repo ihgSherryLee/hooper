@@ -41,7 +41,6 @@ router.map({
     component: Topic
   },
   '/question': {
-    name: 'topic',
     component: Question
   }
 })
