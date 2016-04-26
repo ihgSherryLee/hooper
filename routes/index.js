@@ -76,14 +76,16 @@ function changeUserInfo (req, res) {
 }
 
 function getTopic (req, res) {
+  // to do 查询用户
   var data = req.body
   var account = data.account
+  account = 10000
   var topicCat = data.topicCat
-  var query = 'SELECT * FROM topics WHERE topicCat = "' + topicCat + '"'
+  // 不确定列名，会导致查询的结果中，topicName为空
+  var query = 'SELECT topics.topicId, topics.topicName, topics.topicImg, topics.topicDesc, user_topic_relationship.userId FROM topics LEFT JOIN user_topic_relationship ON topics.topicId = user_topic_relationship.topicId && userId = ' + account + ' WHERE topicCat = "' + topicCat + '";'
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
-    
     res.send({data: rows})
   });
 }
@@ -108,6 +110,20 @@ function getTopicQuestion (req, res) {
   });
 }
 
+function followTopic (req, res) {
+  var data = req.body
+  var account = 10000
+  console.log(data);
+  var topicId = data.topicId
+  var query = 'INSERT INTO user_topic_relationship(userId, topicId) VALUE (' + account + ', ' + topicId + ')'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -116,4 +132,5 @@ module.exports = function (app) {
   app.post('/getTopic', getTopic);
   app.get('/getTopicCat', getTopicCat);
   app.post('/getTopicQuestion', getTopicQuestion);
+  app.post('/followTopic', followTopic);
 };

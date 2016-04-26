@@ -54,10 +54,6 @@
       <div class="topic-title">话题广场</div>
       <div class="topic-cat">
         <ul class="clearfix">
-          <li class="topic-cat-item"><a href="#篮球">tiyu</a></li>
-          <li class="topic-cat-item"><a>tiyu</a></li>
-          <li class="topic-cat-item"><a>tiyu</a></li>
-          <li class="topic-cat-item"><a>tiyu</a></li>
           <li class="topic-cat-item" v-for="item in topicCats"><a href="#{{item.topicCat}}" @click="showTopic(item.topicCat)">{{item.topicCat}}</a></li>
         </ul>
       </div>
@@ -68,8 +64,8 @@
             <strong>{{item.topicName}}</strong>
           </a>
           <p>{{item.description}}</p>
-          <a v-if="!item.followed" class="follow" href="" @click="unfollow"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
-          <a v-else class="follow" href="">取消关注</a>
+          <a v-if="!item.userId" class="follow" href="" @click="follow(item.topicId)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
+          <a v-else class="follow" href="" @click="unfollow(item.topicId)">取消关注</a>
         </div>
       </div>
     </div>
@@ -88,7 +84,15 @@
       }
     },
     methods: {
-      follow: function () {
+      follow: function (topic) {
+        var data = {}
+        console.log(topic)
+        data.topicId = topic
+        Vue.http.post('/api/followTopic', data).then(function (response) {
+          console.log(response.data)
+          self.topics = response.data.data
+        }, function () {
+        })
       },
       unfollow: function () {
       },
