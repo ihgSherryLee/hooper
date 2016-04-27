@@ -59,13 +59,13 @@
       </div>
       <div class="topic-list">
         <div class="topic-item" v-for="item in topics">
-          <a v-link="{name: 'topic', params: {topicId: item.Id}}">
+          <a v-link="{name: 'topic', params: {topicId: item.topicId}}">
             <img src="" alt="">
             <strong>{{item.topicName}}</strong>
           </a>
           <p>{{item.description}}</p>
-          <a v-if="!item.userId" class="follow" href="" @click="follow(item.topicId)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
-          <a v-else class="follow" href="" @click="unfollow(item.topicId)">取消关注</a>
+          <a v-if="!item.userId" class="follow" href="#" @click="follow($index,item.topicId)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
+          <a v-else class="follow" href="#" @click="unfollow($index, item.topicId)">取消关注</a>
         </div>
       </div>
     </div>
@@ -80,21 +80,51 @@
     data: function () {
       return {
         topicCats: [],
-        topics: []
+        topics: [
+          {
+            topicId: '1',
+            topicName: 'tiyu',
+            description: '',
+            userId: 2
+          },
+          {
+            topicId: '1',
+            topicName: 'tiyu',
+            description: '',
+            userId: null
+          },
+          {
+            topicId: '1',
+            topicName: 'tiyu',
+            description: '',
+            userId: null
+          }
+        ]
       }
     },
     methods: {
-      follow: function (topic) {
+      follow: function (index, topic) {
+        var self = this
         var data = {}
-        console.log(topic)
+        console.log(index)
         data.topicId = topic
-        Vue.http.post('/api/followTopic', data).then(function (response) {
-          console.log(response.data)
-          self.topics = response.data.data
-        }, function () {
-        })
+        self.topics[index].userId = true
+        // Vue.http.post('/api/followTopic', data).then(function (response) {
+        //   console.log(response.data)
+        //   self.topics[index].userId = true
+        // }, function () {
+        // })
       },
-      unfollow: function () {
+      unfollow: function (index, topic) {
+        var self = this
+        var data = {}
+        data.topicId = topic
+        self.topics[index].userId = null
+        // Vue.http.post('/api/unfollowTopic', data).then(function (response) {
+        //   console.log(response.data)
+        //   self.topics[index].userId = null
+        // }, function () {
+        // })
       },
       showTopic: function (topicCat) {
         var self = this

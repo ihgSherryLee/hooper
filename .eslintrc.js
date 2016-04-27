@@ -13,6 +13,7 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     // 允许使用未定义变量,warn
-    'no-undef': 1
+    'no-undef': 1,
+    'new-cap': 0
   }
 }
