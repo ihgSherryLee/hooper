@@ -109,22 +109,22 @@
         console.log(index)
         data.topicId = topic
         self.topics[index].userId = true
-        // Vue.http.post('/api/followTopic', data).then(function (response) {
-        //   console.log(response.data)
-        //   self.topics[index].userId = true
-        // }, function () {
-        // })
+        Vue.http.post('/api/followTopic', data).then(function (response) {
+          console.log(response.data)
+          self.topics[index].userId = true
+        }, function () {
+        })
       },
       unfollow: function (index, topic) {
         var self = this
         var data = {}
         data.topicId = topic
         self.topics[index].userId = null
-        // Vue.http.post('/api/unfollowTopic', data).then(function (response) {
-        //   console.log(response.data)
-        //   self.topics[index].userId = null
-        // }, function () {
-        // })
+        Vue.http.post('/api/unfollowTopic', data).then(function (response) {
+          console.log(response.data)
+          self.topics[index].userId = null
+        }, function () {
+        })
       },
       showTopic: function (topicCat) {
         var self = this

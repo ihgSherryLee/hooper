@@ -124,6 +124,20 @@ function followTopic (req, res) {
   });
 }
 
+function unfollowTopic (req, res) {
+  var data = req.body
+  var account = 10000
+  console.log(data);
+  var topicId = data.topicId
+  var query = 'DELETE FROM user_topic_relationship WHERE userId = "' + account + '" AND topicId = "' + topicId + '"'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -133,4 +147,5 @@ module.exports = function (app) {
   app.get('/getTopicCat', getTopicCat);
   app.post('/getTopicQuestion', getTopicQuestion);
   app.post('/followTopic', followTopic);
+  app.post('/unfollowTopic', unfollowTopic);
 };
