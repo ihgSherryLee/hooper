@@ -52,22 +52,22 @@
         <div class="total-answer">{{totalAnswer}}</div>
       </div>
       <div class="answer-list">
-        <div class="answer-item">
+        <div class="answer-item" v-for="item in answer">
           <div class="votebar">
-            <button class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>111</span></button>
+            <button class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
             <button class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
           </div>
           <div class="answer-deatail">
             <div class="author">
-              <a href="#">XXX</a>,啊啊啊啊
+              <a href="#">{{item.answerName}}</a>,啊啊啊啊
             </div>
             <div class="answer summary">
-              习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
+              {{item.answerText}}
             </div>
           </div>
           <div class="feed-meta">
             <div class="meta-panel">
-              <span class="answer-date">发布于 2016-01-15</span>
+              <span class="answer-date">发布于 {{item.date}}</span>
               <a href="#">关注问题</a>
               <a href="#">评论</a>
               <a href="#">收起</a>
@@ -117,7 +117,8 @@
         title: '有哪些动漫或者游戏里的台词在生活中被经常说起？',
         description: '可以是形容一件事情的时候经常被借用的话，也可以是原本毫无意义，但是在游戏/动漫中反复出现导致生活中也拿它作为口头禅。（例如；它们回来了。我们是它们的奴隶。）,',
         totalAnswer: 20,
-        editorContent: ''
+        editorContent: '',
+        answer: []
       }
     },
     methods: {
@@ -142,6 +143,11 @@
         self.gender = response.data.gender
         self.headline = response.data.headline
         self.description = response.data.description
+      }, function () {
+      })
+      Vue.http.post('/api/getAnswer', {questionId: 1}).then(function (response) {
+        console.log(response.data)
+        self.answer = response.data.data
       }, function () {
       })
       var editor = new wangEditor('editor-trigger')

@@ -138,6 +138,20 @@ function unfollowTopic (req, res) {
   });
 }
 
+function getAnswer (req, res) {
+  var data = req.body
+  var account = 10000
+  console.log(data);
+  var questionId = data.questionId
+  var query = 'SELECT * FROM answers WHERE questionId = "' + questionId + '"'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -148,4 +162,5 @@ module.exports = function (app) {
   app.post('/getTopicQuestion', getTopicQuestion);
   app.post('/followTopic', followTopic);
   app.post('/unfollowTopic', unfollowTopic);
+  app.post('/getAnswer', getAnswer);
 };
