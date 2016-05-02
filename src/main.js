@@ -29,9 +29,9 @@ router.map({
       }
     }
   },
-  '/profile': {
-    component: Profile,
-    name: 'profile'
+  '/profile/:userId': {
+    name: 'profile',
+    component: Profile
   },
   '/topicList': {
     component: TopicList

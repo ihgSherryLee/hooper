@@ -1,4 +1,5 @@
 var mysql      = require('mysql');
+var async = require('async');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'hooper',
@@ -47,19 +48,12 @@ function signUp(req, res) {
 }
 
 function queryUser (req, res) {
-  var data = req.body
   var resData = {}
-  var account = data.account
-  var query = 'SELECT * FROM users WHERE email = "' + account + '"'
+  var account = req.query.user
+  var query = 'SELECT userName, userImg, gender, headline, description FROM users WHERE email = "' + account + '"'
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
-    resData.name = rows[0].userId
-    resData.img = rows[0].userImg
-    resData.gender = rows[0].gender
-    resData.headline = rows[0].headline
-    resData.description = rows[0].description
-
-    res.send(resData)
+    res.send(rows[0])
   });
 }
 
@@ -152,10 +146,67 @@ function getAnswer (req, res) {
   });
 }
 
+function getQuestion (req, res) {
+  var user = req.query.user
+  var questionId = req.query.questionId
+  var sqls = {
+    tag: 'SELECT topicName FROM question_topic_relationship LEFT JOIN topics ON topics.topicId = question_topic_relationship.topicId WHERE questionId = "' + questionId + '"',
+    question: 'SELECT * FROM questions WHERE questionId = "' + questionId + '"',
+    answer: 'SELECT * FROM answers LEFT JOIN users on answers.answererId = users.userId WHERE questionId = "' + questionId + '"'
+  }
+  var data = {}
+  async.forEachOf(sqls, function(value, key, callback) {
+  // 遍历每条SQL并执行
+    connection.query(value, function(err, results) {
+      if(err) {
+        callback(err);
+      } else {
+        data[key] = results;
+        callback();
+      }
+    });
+  }, function(err) {
+    // 所有SQL执行完成后回调
+    if(err) {
+      console.log(err);
+    } else {
+      console.log(data);
+      res.send(data)
+    }
+  });
+}
+
+function getIndex (req, res) {
+  var user = req.query.user
+  var query = 'SELECT * FROM answers LEFT JOIN questions ON answers.questionId = questions.questionerId LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId' + questionId + '"'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
+function answer (req, res) {
+  var data = req.body
+  console.log(data);
+  var questionId = data.questionId
+  var user = data.user
+  var text = data.text
+  var date = new Date()
+  var query = 'INSERT INTO answers(answerText, answererId, questionId, date) VALUE ("' + text + '", ' + user + ', ' + questionId + ', "' + date + '")'
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({data: rows})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
-  app.post('/queryUser', queryUser);
+  app.get('/queryUser', queryUser);
   app.post('/changeUserInfo', changeUserInfo);
   app.post('/getTopic', getTopic);
   app.get('/getTopicCat', getTopicCat);
@@ -163,4 +214,10 @@ module.exports = function (app) {
   app.post('/followTopic', followTopic);
   app.post('/unfollowTopic', unfollowTopic);
   app.post('/getAnswer', getAnswer);
+  // 问题详情页
+  app.get('/getQuestion', getQuestion);
+  // 回答问题
+  app.post('/answer', answer);
+  // 首页
+  app.get('/getIndex', getIndex);
 };

@@ -80,26 +80,7 @@
     data: function () {
       return {
         topicCats: [],
-        topics: [
-          {
-            topicId: '1',
-            topicName: 'tiyu',
-            description: '',
-            userId: 2
-          },
-          {
-            topicId: '1',
-            topicName: 'tiyu',
-            description: '',
-            userId: null
-          },
-          {
-            topicId: '1',
-            topicName: 'tiyu',
-            description: '',
-            userId: null
-          }
-        ]
+        topics: []
       }
     },
     methods: {

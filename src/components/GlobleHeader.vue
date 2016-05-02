@@ -60,17 +60,17 @@
       <div>
         <form action="" class="navbar-form" role="search">
           <input type="text" class="form-control" placeholder="搜索话题、人">
-          <button type="submit" class="btn btn-default">搜索</button>
+          <button @click="submit" class="btn btn-default">搜索</button>
         </form>
         <ul class="nav navbar-nav">
-          <li><a href="#" class="navbar-nav-li">首页</a></li>
-          <li><a href="#" class="navbar-nav-li">话题</a></li>
+          <li><a v-link="{path: 'index'}" class="navbar-nav-li">首页</a></li>
+          <li><a href="#" v-link="{path:'topicList'}"class="navbar-nav-li">话题</a></li>
         </ul>
       </div>
       <div class="dropdown profile">
         <a href="#" class="user-info">
-          <span class="user-name">{{user}}</span>
-          <img class="user-img" src="{{userImg}}">
+          <span class="user-name">{{user.userName}}</span>
+          <img class="user-img" src="{{user.userImg}}">
         </a>
         <ul class="dropdown-menu dropdown-menu-right">
           <li><a href="#">我的主页</a></li>
@@ -84,37 +84,27 @@
 <script>
   import Vue from 'Vue'
   import VueResource from 'Vue-resource'
+  import cookie from './../assets/scripts/cookie.js'
   Vue.use(VueResource)
 
-  function getCookie (name) {
-    if (document.cookie.length > 0) {
-      var c_start = document.cookie.indexOf(name + '=')
-      var c_end
-      if (c_start !== -1) {
-        c_start = c_start + name.length + 1
-        c_end = document.cookie.indexOf(';', c_start)
-        if (c_end === -1) c_end = document.cookie.length
-        return unescape(document.cookie.substring(c_start, c_end))
-      }
-    }
-    return ''
-  }
   export default {
     data: function () {
       return {
-        user: '',
-        userImg: ''
+        user: {}
+      }
+    },
+    methods: {
+      submit: function () {
       }
     },
     ready: function () {
       var self = this
-      var account = getCookie('account')
+      var account = cookie.getCookie('account')
       var data = {}
-      data.account = account
+      data.account = 10000
       console.log(account)
-      Vue.http.post('/api/queryUser', data).then(function (response) {
-        self.user = response.data.name
-        self.userImg = response.data.img
+      Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
+        self.user = response.data
         console.log(response.data)
       }, function () {
       })

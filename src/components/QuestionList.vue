@@ -140,159 +140,7 @@
           </div>
         </div>
       </div>
-      <div class="news-list-detail first">
-        <div class="avatar">
-          <a href="#"><img src=""></a>
-        </div>
-        <div class="feed-main">
-          <div class="source">来自<a href="#">XXX</a></div>
-          <div class="content">
-            <h2><a href="#">程序员都有哪些强迫症行为？</a></h2>
-            <div class="question-deatial">我虽然不是程序员，偶尔写写代码，提升工作效率，但是写代码时，会强迫自己缩进，看到不缩进的代码，特别难受，喜欢强迫自己写注释，看到没注释的代码就想一把扔过去。还有的人写C语言强迫大括号换行，还有的人强迫自己用vim或者emacs编辑器，都有哪些强迫症？这些强迫症是否可以治疗？</div>
-          </div>
-          <div class="entry-body">
-            <div class="vote">
-              <button class="vote-count">111</button>
-            </div>
-            <div class="votebar">
-              <button class="up" title="赞同"></button>
-              <button class="down" title="反对，不会显示你的姓名"></button>
-            </div>
-            <div class="answer-deatail">
-              <div class="author">
-                <a href="#">XXX</a>,啊啊啊啊
-              </div>
-              <div class="vote-info"></div>
-              <div class="answer">
-                习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
-                <span class="answer-date">发布于 2016-01-15</span>
-              </div>
-            </div>
-            <div class="feed-meta">
-              <div class="meta-panel">
-                <a href="#">关注问题</a>
-                <a href="#">评论</a>
-                <a href="#">收起</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="news-list-detail first">
-        <div class="avatar">
-          <a href="#"><img src=""></a>
-        </div>
-        <div class="feed-main">
-          <div class="source">来自<a href="#">XXX</a></div>
-          <div class="content">
-            <h2><a href="#">程序员都有哪些强迫症行为？</a></h2>
-            <div class="question-deatial">我虽然不是程序员，偶尔写写代码，提升工作效率，但是写代码时，会强迫自己缩进，看到不缩进的代码，特别难受，喜欢强迫自己写注释，看到没注释的代码就想一把扔过去。还有的人写C语言强迫大括号换行，还有的人强迫自己用vim或者emacs编辑器，都有哪些强迫症？这些强迫症是否可以治疗？</div>
-          </div>
-          <div class="entry-body">
-            <div class="vote">
-              <button class="vote-count">111</button>
-            </div>
-            <div class="votebar">
-              <button class="up" title="赞同"><span class="glyphicon glyphicon-triangle-top"></span></button>
-              <button class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-triangle-bottom"></span></button>
-            </div>
-            <div class="answer-deatail">
-              <div class="author">
-                <a href="#">XXX</a>,啊啊啊啊
-              </div>
-              <div class="vote-info"></div>
-              <div class="answer">
-                习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
-                <span class="answer-date">发布于 2016-01-15</span>
-              </div>
-            </div>
-            <div class="feed-meta">
-              <div class="meta-panel">
-                <a href="#">关注问题</a>
-                <a href="#">评论</a>
-                <a href="#">收起</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="news-list-detail first">
-        <div class="avatar">
-          <a href="#"><img src=""></a>
-        </div>
-        <div class="feed-main">
-          <div class="source">来自<a href="#">XXX</a></div>
-          <div class="content">
-            <h2><a href="#">程序员都有哪些强迫症行为？</a></h2>
-            <div class="question-deatial">我虽然不是程序员，偶尔写写代码，提升工作效率，但是写代码时，会强迫自己缩进，看到不缩进的代码，特别难受，喜欢强迫自己写注释，看到没注释的代码就想一把扔过去。还有的人写C语言强迫大括号换行，还有的人强迫自己用vim或者emacs编辑器，都有哪些强迫症？这些强迫症是否可以治疗？</div>
-          </div>
-          <div class="entry-body">
-            <div class="vote">
-              <button class="vote-count">111</button>
-            </div>
-            <div class="votebar">
-              <button class="up" title="赞同"></button>
-              <button class="down" title="反对，不会显示你的姓名"></button>
-            </div>
-            <div class="answer-deatail">
-              <div class="author">
-                <a href="#">XXX</a>,啊啊啊啊
-              </div>
-              <div class="vote-info"></div>
-              <div class="answer">
-                习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
-                <span class="answer-date">发布于 2016-01-15</span>
-              </div>
-            </div>
-            <div class="feed-meta">
-              <div class="meta-panel">
-                <a href="#">关注问题</a>
-                <a href="#">评论</a>
-                <a href="#">收起</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="news-list-detail first">
-        <div class="avatar">
-          <a href="#"><img src=""></a>
-        </div>
-        <div class="feed-main">
-          <div class="source">来自<a href="#">XXX</a></div>
-          <div class="content">
-            <h2><a href="#">程序员都有哪些强迫症行为？</a></h2>
-            <div class="question-deatial">我虽然不是程序员，偶尔写写代码，提升工作效率，但是写代码时，会强迫自己缩进，看到不缩进的代码，特别难受，喜欢强迫自己写注释，看到没注释的代码就想一把扔过去。还有的人写C语言强迫大括号换行，还有的人强迫自己用vim或者emacs编辑器，都有哪些强迫症？这些强迫症是否可以治疗？</div>
-          </div>
-          <div class="entry-body">
-            <div class="vote">
-              <button class="vote-count">111</button>
-            </div>
-            <div class="votebar">
-              <button class="up" title="赞同"></button>
-              <button class="down" title="反对，不会显示你的姓名"></button>
-            </div>
-            <div class="answer-deatail">
-              <div class="author">
-                <a href="#">XXX</a>,啊啊啊啊
-              </div>
-              <div class="vote-info"></div>
-              <div class="answer">
-                习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
-                <span class="answer-date">发布于 2016-01-15</span>
-              </div>
-            </div>
-            <div class="feed-meta">
-              <div class="meta-panel">
-                <a href="#">关注问题</a>
-                <a href="#">评论</a>
-                <a href="#">收起</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="news-list-detail first">
+      <div class="news-list-detail" v-for="item in items">
         <div class="avatar">
           <a href="#"><img src=""></a>
         </div>
@@ -335,15 +183,27 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      // note: changing this line won't causes changes
-      // with hot-reload because the reloaded component
-      // preserves its current state and we are modifying
-      // its initial state.
-      msg: 'Hello World!'
+  module.exports = {
+    data: function () {
+      return {
+        items: []
+      }
+    },
+    methods: {
+    },
+    ready: function () {
+      var self = this
+      var account = cookie.getCookie('account')
+      var data = {}
+      data.account = account
+      console.log(account)
+      Vue.http.get('/api/getIndex?user=10000&questionId=1', data).then(function (response) {
+        self.tag = response.data.tag
+        self.question = response.data.question[0]
+        self.answer = response.data.answer
+        self.totalAnswer = self.answer.length
+      }, function () {
+      })
     }
   }
-}
 </script>

@@ -14,10 +14,16 @@
     width: 300px;
     font-size: 18px;
     text-align: center;
-    .nav-slide a {
-      display: inline-block;
-      width: 4em;
-      line-height: 35px;
+    .nav-slide {
+      a {
+        display: inline-block;
+        width: 4em;
+        line-height: 35px;
+      }
+      .active {
+        color: #fff;
+        background: #5FB4E8;
+      }
     }
   }
   .view-signup,.view-signin {
@@ -57,8 +63,8 @@
     <div class="title">HOOPER</div>
     <div class="tab-nav">
       <div class="nav-slide">
-        <a class="active" @click="changeSignupTab">注册</a>
-        <a @click="changeSigninTab">登录</a>
+        <a href="#signup" class="active" @click="changeSignupTab">注册</a>
+        <a href="#signin" @click="changeSigninTab">登录</a>
       </div>
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
@@ -67,7 +73,6 @@
         <input type="text" class="form-control input" name="email" v-model="email" @blur="checkEmail" placeholder="邮箱"><span class="tip">{{tips.email}}</span>
         <input type="password" class="form-control input" v-model="password" placeholder="密码（不少于6位数字）"><span class="tip">{{tips.password}}</span>
         <button class="sign-btn" @click="signUp">注册</button>
-        <a v-link="{'path':'/index/questionList'}">aa</a>
       <!-- </form> -->
     </div>
     <div class="view view-signin" :class="{'selected': signin}">
@@ -84,11 +89,13 @@
   import Vue from 'Vue'
   import VueRouter from 'vue-router'
   import VueResource from 'Vue-resource'
-  import './../assets/scripts/cookie.js'
+  import cookie from './../assets/scripts/cookie.js'
   Vue.use(VueRouter)
   Vue.use(VueResource)
 
-  var router = new VueRouter()
+  var router = new VueRouter({
+    history: true
+  })
 
   module.exports = {
     data: function () {
@@ -149,17 +156,23 @@
         }
       },
       signUp: function () {
+        router.go({
+          name: 'profile',
+          params: {
+            userId: 10000
+          }
+        })
         var self = this
         var data = {}
         data.fullname = self.fullname
         data.email = self.email
         data.password = self.password
-        Vue.http.post('/api/signUp', data).then(function (response) {
-          setCookie('account', data.account, 7)
-          router.go('/profile')
-        }, function () {
+        // Vue.http.post('/api/signUp', data).then(function (response) {
+        //   cookie.setCookie('account', data.account, 7)
+        //   router.go('/profile')
+        // }, function () {
 
-        })
+        // })
       },
       signIn: function () {
         var self = this
@@ -171,7 +184,7 @@
           if (!response.data.status) {
             window.alert(response.data.tips)
           } else {
-            setCookie('account', data.account, 7)
+            cookie.setCookie('account', data.account, 7)
             router.go('/index')
           }
           console.log(response)

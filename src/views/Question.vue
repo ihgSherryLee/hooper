@@ -15,6 +15,7 @@
       font-weight: 700;
     }
     .total-answer {
+      padding: 10px 0;
       border-top: 1px solid #ccc;
     }
   }
@@ -35,6 +36,14 @@
           background: #eff6fa;
         }
       }
+      .answer-detail {
+        .author {
+          margin-bottom: 10px;
+        }
+      }
+      .feed-meta {
+        color: #ccc;
+      }
     }
   }
 </style>
@@ -44,12 +53,12 @@
   <div class="main-wrap">
     <div class="main-content-inner">
       <div class="tag">
-        <a v-for="item in tags" href="" class="item-tag">{{item.name}}</a>
+        <a v-for="item in tag" href="" class="item-tag">{{item.topicName}}</a>
       </div>
       <div class="question">
-        <h2>{{title}}</h2>
-        <p v-if="description">{{description}}</p>
-        <div class="total-answer">{{totalAnswer}}</div>
+        <h2>{{question.questionTitle}}</h2>
+        <ps>{{question.questionDesc}}</p>
+        <div class="total-answer">共{{totalAnswer}}个回答</div>
       </div>
       <div class="answer-list">
         <div class="answer-item" v-for="item in answer">
@@ -57,12 +66,12 @@
             <button class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
             <button class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
           </div>
-          <div class="answer-deatail">
+          <div class="answer-detail">
             <div class="author">
-              <a href="#">{{item.answerName}}</a>,啊啊啊啊
+              <a href="#">{{item.userName}}</a>,{{item.userIntro}}
             </div>
             <div class="answer summary">
-              {{item.answerText}}
+              {{{item.answerText}}}
             </div>
           </div>
           <div class="feed-meta">
@@ -78,9 +87,7 @@
       <div id="editor-container">
         <div id="editor-trigger" style="height:200px;max-height:300px;">
         </div>
-        <hr>
-        <p><b>以下是编辑器的内容：</b></p>
-        <p>{{ editorContent }}</p>
+        <button class="submit" @click="submit">发表</button>
     </div>
     </div>
   </div>
@@ -94,37 +101,27 @@
   module.exports = {
     data: function () {
       return {
-        tags: [
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          },
-          {
-            name: '体育'
-          }
-        ],
-        title: '有哪些动漫或者游戏里的台词在生活中被经常说起？',
-        description: '可以是形容一件事情的时候经常被借用的话，也可以是原本毫无意义，但是在游戏/动漫中反复出现导致生活中也拿它作为口头禅。（例如；它们回来了。我们是它们的奴隶。）,',
-        totalAnswer: 20,
+        tag: [],
+        question: {},
         editorContent: '',
-        answer: []
+        answer: [],
+        totalAnswer: 0
       }
     },
     methods: {
       follow: function () {
       },
       unfollow: function () {
+      },
+      submit: function () {
+        var self = this
+        var data = {}
+        data.questionId = 1
+        data.user = 10000
+        data.text = self.editorContent
+        Vue.http.post('/api/answer', data).then(function (response) {
+        }, function () {
+        })
       }
     },
     components: {
@@ -136,18 +133,11 @@
       var data = {}
       data.account = account
       console.log(account)
-      Vue.http.post('/api/getAllTopic', data).then(function (response) {
-        console.log(response.data)
-        self.userName = response.data.userId
-        self.userImg = response.data.userImg
-        self.gender = response.data.gender
-        self.headline = response.data.headline
-        self.description = response.data.description
-      }, function () {
-      })
-      Vue.http.post('/api/getAnswer', {questionId: 1}).then(function (response) {
-        console.log(response.data)
-        self.answer = response.data.data
+      Vue.http.get('/api/getQuestion?user=10000&questionId=1', data).then(function (response) {
+        self.tag = response.data.tag
+        self.question = response.data.question[0]
+        self.answer = response.data.answer
+        self.totalAnswer = self.answer.length
       }, function () {
       })
       var editor = new wangEditor('editor-trigger')
