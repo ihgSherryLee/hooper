@@ -1,5 +1,7 @@
 var mysql      = require('mysql');
 var async = require('async');
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'hooper',
@@ -203,6 +205,12 @@ function answer (req, res) {
   });
 }
 
+function uploadImg (req, res) {
+  console.log(111);
+  console.log(req.body);
+  console.log(req.file);
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -220,4 +228,5 @@ module.exports = function (app) {
   app.post('/answer', answer);
   // 首页
   app.get('/getIndex', getIndex);
+  app.post('/uploadImg', upload.single('photo'), uploadImg);
 };

@@ -50,6 +50,12 @@
         <span class="item-title">头像</span>
         <div class="profile-item-content">
           <img src="">
+          <form action="/api/uploadImg" enctype="multipart/form-data" method="post">
+            <input type="file" name="photo" />
+            <input @click="uploadImg" type="submit" />
+          </form>
+          <!-- <input @click="selectImg" type="file" name="file" />
+          <a @click="uploadImg" href="#">提交</a> -->
         </div>
       </div>
       <div class="profile-item">
@@ -128,6 +134,17 @@
       }
     },
     methods: {
+      selectImg: function () {
+        $('input[type=file]').click()
+      },
+      uploadImg: function () {
+        var data = new FormData()
+        data.append('file', $('input[type=file]')[0].files[0])
+        data.user = 10000
+        Vue.http.post('/api/uploadImg', data).then(function (response) {
+        }, function () {
+        })
+      },
       showEdit: function (val) {
         var self = this
         self.show[val] = true

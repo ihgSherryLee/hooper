@@ -87,15 +87,9 @@
 
 <script>
   import Vue from 'Vue'
-  import VueRouter from 'vue-router'
   import VueResource from 'Vue-resource'
   import cookie from './../assets/scripts/cookie.js'
-  Vue.use(VueRouter)
   Vue.use(VueResource)
-
-  var router = new VueRouter({
-    history: true
-  })
 
   module.exports = {
     data: function () {
@@ -156,23 +150,22 @@
         }
       },
       signUp: function () {
-        router.go({
-          name: 'profile',
-          params: {
-            userId: 10000
-          }
-        })
         var self = this
         var data = {}
         data.fullname = self.fullname
         data.email = self.email
         data.password = self.password
-        // Vue.http.post('/api/signUp', data).then(function (response) {
-        //   cookie.setCookie('account', data.account, 7)
-        //   router.go('/profile')
-        // }, function () {
+        Vue.http.post('/api/signUp', data).then(function (response) {
+          cookie.setCookie('account', data.account, 7)
+          self.$router.go({
+            name: 'profile',
+            params: {
+              userId: 10000
+            }
+          })
+        }, function () {
 
-        // })
+        })
       },
       signIn: function () {
         var self = this
@@ -185,7 +178,7 @@
             window.alert(response.data.tips)
           } else {
             cookie.setCookie('account', data.account, 7)
-            router.go('/index')
+            self.$router.go('/index')
           }
           console.log(response)
         }, function () {
