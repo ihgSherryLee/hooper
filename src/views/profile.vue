@@ -12,6 +12,15 @@
         width: 100px;
         text-align: right;
       }
+      .img {
+        img {
+          width: 100px;
+          height: 100px;
+        }
+        input {
+          // display: none;
+        }
+      }
       .profile-item-content {
         padding-left: 140px;
         .profile-item-content-static {
@@ -48,8 +57,11 @@
       <div class="profile-item">编辑个人资料</div>
       <div class="profile-item">
         <span class="item-title">头像</span>
-        <div class="profile-item-content">
-          <img src="">
+        <div class="profile-item-content img">
+          <a @click="selectImg" href="#"><img v-if="!user.userImg" class="user-img" src="/static/uploads/photos/images.jpg">
+          <img v-else class="user-img" src="{{user.userImg}}"></a>
+          <input type="file" name="image" />
+          <input type="button" @click="uploadImg" />
         </div>
       </div>
       <div class="profile-item">
@@ -110,11 +122,7 @@
   module.exports = {
     data: function () {
       return {
-        userName: '',
-        userImg: '',
-        gender: '',
-        headline: '',
-        description: '',
+        user: {},
         change: {
           gender: '',
           headline: '',
@@ -128,6 +136,19 @@
       }
     },
     methods: {
+      selectImg: function () {
+        $('input[type=file]').click()
+      },
+      uploadImg: function () {
+        var data = {}
+        data.user = 10000
+        Vue.http.post('/api/uploadImg', data).then(function (response) {
+          if (!response.data.status) {
+            window.alert('修改出现问题，请重新修改')
+          }
+        }, function () {
+        })
+      },
       showEdit: function (val) {
         var self = this
         self.show[val] = true
@@ -135,7 +156,7 @@
       save: function (val) {
         var self = this
         var data = {}
-        data.account = getCookie('account')
+        data.account = cookie.getCookie('account')
         data.key = val
         data.val = self.change[val]
         self[val] = self.change[val]
@@ -156,20 +177,20 @@
       GlobleHeader
     },
     ready: function () {
-      var self = this
-      var account = cookie.getCookie('account')
-      var data = {}
-      data.account = account
-      console.log(account)
-      Vue.http.post('/api/queryUser', data).then(function (response) {
-        console.log(response.data)
-        self.userName = response.data.userId
-        self.userImg = response.data.userImg
-        self.gender = response.data.gender
-        self.headline = response.data.headline
-        self.description = response.data.description
-      }, function () {
-      })
+      // var self = this
+      // var account = cookie.getCookie('account')
+      // var data = {}
+      // data.account = account
+      // console.log(account)
+      // Vue.http.post('/api/queryUser', data).then(function (response) {
+      //   console.log(response.data)
+      //   self.userName = response.data.userId
+      //   self.userImg = response.data.userImg
+      //   self.gender = response.data.gender
+      //   self.headline = response.data.headline
+      //   self.description = response.data.description
+      // }, function () {
+      // })
     }
   }
 </script>

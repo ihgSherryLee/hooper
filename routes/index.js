@@ -1,13 +1,18 @@
-var mysql      = require('mysql');
+// var mysql      = require('mysql');
 var async = require('async');
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'hooper',
-  password : 'hooper',
-  database : 'hooper'
-});
+var fs = require('fs');
+var url = require('url');
+var path = require('path');
+var multer = require('multer');
+var upload = multer({dest: 'uploads/'});
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'hooper',
+//   password : 'hooper',
+//   database : 'hooper'
+// });
 
-connection.connect();
+// connection.connect();
 
 function signIn(req, res) {
   var data = req.body
@@ -203,6 +208,11 @@ function answer (req, res) {
   });
 }
 
+function uploadImg (req, res) {
+  console.log(req.body)
+  console.log(req.files)
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -219,5 +229,5 @@ module.exports = function (app) {
   // 回答问题
   app.post('/answer', answer);
   // 首页
-  app.get('/getIndex', getIndex);
+  app.post('/uploadImg', uploadImg);
 };

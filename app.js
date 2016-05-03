@@ -196,17 +196,17 @@ var express = require('express');
 var app = express();
 // body-parser能够获取到req.body
 var bodyParser = require('body-parser');
-var mysql      = require('mysql');
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'hooper',
-  password : 'hooper',
-  database : 'hooper'
-});
+// var mysql      = require('mysql');
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'hooper',
+//   password : 'hooper',
+//   database : 'hooper'
+// });
 
-connection.connect();
+// connection.connect();
 
-app.use(bodyParser.json());  
+app.use(bodyParser.json()); 
 
 var routes = require('./routes')(app);
 

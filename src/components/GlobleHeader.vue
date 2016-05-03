@@ -33,6 +33,10 @@
   .user-info {
     height: 45px;
     margin: 8px;
+    img {
+      height: 45px;
+      height: 45px;
+    }
   }
 .dropdown-menu .sub-menu {
     left: 100%;
@@ -70,7 +74,8 @@
       <div class="dropdown profile">
         <a href="#" class="user-info">
           <span class="user-name">{{user.userName}}</span>
-          <img class="user-img" src="{{user.userImg}}">
+          <img v-if="!user.userImg" class="user-img" src="/static/uploads/photos/images.jpg">
+          <img v-else class="user-img" src="{{user.userImg}}">
         </a>
         <ul class="dropdown-menu dropdown-menu-right">
           <li><a href="#">我的主页</a></li>
@@ -84,7 +89,7 @@
 <script>
   import Vue from 'Vue'
   import VueResource from 'Vue-resource'
-  import cookie from './../assets/scripts/cookie.js'
+  // import cookie from './../assets/scripts/cookie.js'
   Vue.use(VueResource)
 
   export default {
@@ -98,16 +103,16 @@
       }
     },
     ready: function () {
-      var self = this
-      var account = cookie.getCookie('account')
-      var data = {}
-      data.account = 10000
-      console.log(account)
-      Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
-        self.user = response.data
-        console.log(response.data)
-      }, function () {
-      })
+      // var self = this
+      // var account = cookie.getCookie('account')
+      // var data = {}
+      // data.account = 10000
+      // console.log(account)
+      // Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
+      //   self.user = response.data
+      //   console.log(response.data)
+      // }, function () {
+      // })
     }
   }
 </script>

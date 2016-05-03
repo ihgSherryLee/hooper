@@ -21,7 +21,8 @@ module.exports = merge(baseConfig, {
       '$': 'jquery',
       'jQuery': 'jquery',
       'window.jquery': 'jquery',
-      'Vue': 'Vue'
+      'Vue': 'Vue',
+      'VueRouter': 'Vue-router'
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.optimize.OccurenceOrderPlugin(),
