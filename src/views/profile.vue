@@ -58,16 +58,10 @@
       <div class="profile-item">
         <span class="item-title">头像</span>
         <div class="profile-item-content img">
-          <a @click="selectImg" href="#"><img v-if="!user.userImg" class="user-img" src="/static/uploads/photos/images.jpg">
+          <a @click="selectImg" href="#"><img v-if="!user.userImg" class="user-img" src="/static/uploads/icon/images.jpg">
           <img v-else class="user-img" src="{{user.userImg}}"></a>
-        <div class="profile-item-content">
-          <img src="">
-          <form action="/api/uploadImg" enctype="multipart/form-data" method="post">
-            <input type="file" name="photo" />
-            <input @click="uploadImg" type="submit" />
-          </form>
-          <!-- <input @click="selectImg" type="file" name="file" />
-          <a @click="uploadImg" href="#">提交</a> -->
+          <input @click="selectImg" type="file" name="photo" />
+          <a @click="uploadImg" href="#">提交</a>
         </div>
       </div>
       <div class="profile-item">
@@ -146,12 +140,12 @@
         $('input[type=file]').click()
       },
       uploadImg: function () {
-        var data = {}
-        data.user = 10000
         var data = new FormData()
-        data.append('file', $('input[type=file]')[0].files[0])
-        data.user = 10000
-        Vue.http.post('/api/uploadImg', data).then(function (response) {
+        data.append('icon', $('input[type=file]')[0].files[0])
+        console.log(data)
+        Vue.http.post('/api/uploadIcon?user=10000', data, {emulateJson: true}).then(function (response) {
+          console.log(response)
+          $('.img img').attr('src', response.data)
         }, function () {
         })
       },
@@ -183,20 +177,20 @@
       GlobleHeader
     },
     ready: function () {
-      // var self = this
-      // var account = cookie.getCookie('account')
-      // var data = {}
-      // data.account = account
-      // console.log(account)
-      // Vue.http.post('/api/queryUser', data).then(function (response) {
-      //   console.log(response.data)
-      //   self.userName = response.data.userId
-      //   self.userImg = response.data.userImg
-      //   self.gender = response.data.gender
-      //   self.headline = response.data.headline
-      //   self.description = response.data.description
-      // }, function () {
-      // })
+      var self = this
+      var account = cookie.getCookie('account')
+      var data = {}
+      data.account = account
+      console.log(account)
+      Vue.http.post('/api/queryUser', data).then(function (response) {
+        console.log(response.data)
+        self.userName = response.data.userId
+        self.userImg = response.data.userImg
+        self.gender = response.data.gender
+        self.headline = response.data.headline
+        self.description = response.data.description
+      }, function () {
+      })
     }
   }
 </script>

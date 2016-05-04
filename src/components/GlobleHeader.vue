@@ -67,14 +67,14 @@
           <button @click="submit" class="btn btn-default">搜索</button>
         </form>
         <ul class="nav navbar-nav">
-          <li><a v-link="{path: 'index'}" class="navbar-nav-li">首页</a></li>
-          <li><a href="#" v-link="{path:'topicList'}"class="navbar-nav-li">话题</a></li>
+          <li><a v-link="{path: '/index'}" class="navbar-nav-li">首页</a></li>
+          <li><a href="#" v-link="{path:'/topicList'}"class="navbar-nav-li">话题</a></li>
         </ul>
       </div>
       <div class="dropdown profile">
         <a href="#" class="user-info">
           <span class="user-name">{{user.userName}}</span>
-          <img v-if="!user.userImg" class="user-img" src="/static/uploads/photos/images.jpg">
+          <img v-if="!user.userImg" class="user-img" src="/static/uploads/icon/images.jpg">
           <img v-else class="user-img" src="{{user.userImg}}">
         </a>
         <ul class="dropdown-menu dropdown-menu-right">

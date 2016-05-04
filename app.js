@@ -196,6 +196,9 @@ var express = require('express');
 var app = express();
 // body-parser能够获取到req.body
 var bodyParser = require('body-parser');
+var busboy = require('connect-busboy'); 
+
+//加入上传图片的中间件
 // var mysql      = require('mysql');
 // var connection = mysql.createConnection({
 //   host     : 'localhost',
@@ -206,7 +209,9 @@ var bodyParser = require('body-parser');
 
 // connection.connect();
 
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(busboy());
 
 var routes = require('./routes')(app);
 

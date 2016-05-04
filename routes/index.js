@@ -1,18 +1,16 @@
-// var mysql      = require('mysql');
+var mysql      = require('mysql');
 var async = require('async');
 var fs = require('fs');
 var url = require('url');
 var path = require('path');
-var multer = require('multer');
-var upload = multer({dest: 'uploads/'});
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'hooper',
-//   password : 'hooper',
-//   database : 'hooper'
-// });
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'hooper',
+  password : 'hooper',
+  database : 'hooper'
+});
 
-// connection.connect();
+connection.connect();
 
 function signIn(req, res) {
   var data = req.body
@@ -208,9 +206,53 @@ function answer (req, res) {
   });
 }
 
-function uploadImg (req, res) {
-  console.log(req.body)
-  console.log(req.file)
+function uploadIcon (req, res) {
+  req.pipe(req.busboy);
+  //接收文件上传，就执行后面匿名函数方法
+  // fieldname字段名字、file文件对象、filename文件名字、encoding使用的编码、mimetype文件类型
+  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype){
+    // new Date().getTime()表示当前时间戳，然后转换字符串
+    // path.extname获取文件的后缀名
+    var newFilename = String(new Date().getTime()) + path.extname(filename);
+    var filePath = 'static/uploads/icon/' + newFilename;
+    console.log(filePath)
+    var url = 'static/uploads/icon/' + newFilename; //上传文件新的路径
+    //将文件转换成管道形式，以流的形式写进指定路径
+    file.pipe(fs.createWriteStream(filePath));
+
+    //文件写完结束后，执行以下函数返回信息
+    file.on('end', function(){
+      var fullpath = req.headers.origin + '/' + url;
+      //res.json({success: true, url: url});
+      res.send(fullpath); //返回文件url绝对路径
+
+    });
+  });
+}
+
+function uploadPhoto (req, res) {
+  req.pipe(req.busboy);
+  //接收文件上传，就执行后面匿名函数方法
+  // fieldname字段名字、file文件对象、filename文件名字、encoding使用的编码、mimetype文件类型
+  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype){
+    // new Date().getTime()表示当前时间戳，然后转换字符串
+    // path.extname获取文件的后缀名
+    var newFilename = String(new Date().getTime()) + path.extname(filename);
+    var filePath = 'static/uploads/photo/' + newFilename;
+    console.log(filePath)
+    var url = 'static/uploads/photo/' + newFilename; //上传文件新的路径
+    //将文件转换成管道形式，以流的形式写进指定路径
+    file.pipe(fs.createWriteStream(filePath));
+
+    //文件写完结束后，执行以下函数返回信息
+    file.on('end', function(){
+      var fullpath = req.headers.origin + '/' + url;
+      //res.json({success: true, url: url});
+      res.send(fullpath); //返回文件url绝对路径
+
+    });
+
+  });
 }
 
 module.exports = function (app) {
@@ -230,5 +272,6 @@ module.exports = function (app) {
   app.post('/answer', answer);
   // 首页
   app.get('/getIndex', getIndex);
-  app.post('/uploadImg', upload.single('photo'), uploadImg);
+  app.post('/uploadIcon', uploadIcon);
+  app.post('/uploadPhoto', uploadPhoto);
 };
