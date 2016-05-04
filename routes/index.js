@@ -210,7 +210,7 @@ function answer (req, res) {
 
 function uploadImg (req, res) {
   console.log(req.body)
-  console.log(req.files)
+  console.log(req.file)
 }
 
 module.exports = function (app) {
@@ -229,5 +229,6 @@ module.exports = function (app) {
   // 回答问题
   app.post('/answer', answer);
   // 首页
-  app.post('/uploadImg', uploadImg);
+  app.get('/getIndex', getIndex);
+  app.post('/uploadImg', upload.single('photo'), uploadImg);
 };

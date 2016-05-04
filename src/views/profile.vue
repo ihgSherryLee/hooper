@@ -60,8 +60,14 @@
         <div class="profile-item-content img">
           <a @click="selectImg" href="#"><img v-if="!user.userImg" class="user-img" src="/static/uploads/photos/images.jpg">
           <img v-else class="user-img" src="{{user.userImg}}"></a>
-          <input type="file" name="image" />
-          <input type="button" @click="uploadImg" />
+        <div class="profile-item-content">
+          <img src="">
+          <form action="/api/uploadImg" enctype="multipart/form-data" method="post">
+            <input type="file" name="photo" />
+            <input @click="uploadImg" type="submit" />
+          </form>
+          <!-- <input @click="selectImg" type="file" name="file" />
+          <a @click="uploadImg" href="#">提交</a> -->
         </div>
       </div>
       <div class="profile-item">
@@ -142,10 +148,10 @@
       uploadImg: function () {
         var data = {}
         data.user = 10000
+        var data = new FormData()
+        data.append('file', $('input[type=file]')[0].files[0])
+        data.user = 10000
         Vue.http.post('/api/uploadImg', data).then(function (response) {
-          if (!response.data.status) {
-            window.alert('修改出现问题，请重新修改')
-          }
         }, function () {
         })
       },
