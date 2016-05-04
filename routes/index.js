@@ -181,12 +181,12 @@ function getQuestion (req, res) {
 
 function getIndex (req, res) {
   var user = req.query.user
-  var query = 'SELECT * FROM answers LEFT JOIN questions ON answers.questionId = questions.questionerId LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId' + questionId + '"'
+  var query = 'SELECT topics.topicId, topicName, topicImg, answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId LEFT JOIN topics ON question_topic_relationship.topicId = topics.topicId WHERE questions.questionId in (SELECT questionId FROM question_topic_relationship WHERE topicId IN  (SELECT topicId FROM users LEFT JOIN  user_topic_relationship ON users.userId = user_topic_relationship.userId WHERE users.userId = ' + user + '))'
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
     
-    res.send({data: rows})
+    res.send(rows)
   });
 }
 
@@ -207,6 +207,7 @@ function answer (req, res) {
 }
 
 function uploadIcon (req, res) {
+  // to do 删除原来的头像
   req.pipe(req.busboy);
   //接收文件上传，就执行后面匿名函数方法
   // fieldname字段名字、file文件对象、filename文件名字、encoding使用的编码、mimetype文件类型
@@ -255,6 +256,19 @@ function uploadPhoto (req, res) {
   });
 }
 
+function up (req, res) {
+  // to do 检测同一用户点赞
+  var answerId = req.query.answerId
+  var upNum = parseInt(req.query.upNum) + 1
+  var query = 'UPDATE answers SET upNum = ' + upNum + ' WHERE answerId = ' + answerId
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({status: true})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -274,4 +288,6 @@ module.exports = function (app) {
   app.get('/getIndex', getIndex);
   app.post('/uploadIcon', uploadIcon);
   app.post('/uploadPhoto', uploadPhoto);
+  // 赞同
+  app.get('/up', up);
 };

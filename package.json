@@ -12,6 +12,7 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
+    "connect-busboy": "0.0.2",
     "vue": "^1.0.17",
     "vue-resource": "^0.7.0",
     "vue-router": "^0.7.13",

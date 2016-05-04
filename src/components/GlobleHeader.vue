@@ -89,7 +89,7 @@
 <script>
   import Vue from 'Vue'
   import VueResource from 'Vue-resource'
-  // import cookie from './../assets/scripts/cookie.js'
+  import cookie from './../assets/scripts/cookie.js'
   Vue.use(VueResource)
 
   export default {
@@ -103,16 +103,16 @@
       }
     },
     ready: function () {
-      // var self = this
-      // var account = cookie.getCookie('account')
-      // var data = {}
-      // data.account = 10000
-      // console.log(account)
-      // Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
-      //   self.user = response.data
-      //   console.log(response.data)
-      // }, function () {
-      // })
+      var self = this
+      var account = cookie.getCookie('account')
+      var data = {}
+      data.account = 10000
+      console.log(account)
+      Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
+        self.user = response.data
+        console.log(response.data)
+      }, function () {
+      })
     }
   }
 </script>

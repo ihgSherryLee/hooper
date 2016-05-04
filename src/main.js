@@ -40,7 +40,8 @@ router.map({
     name: 'topic',
     component: Topic
   },
-  '/question': {
+  '/question/:questionId': {
+    name: 'question',
     component: Question
   }
 })

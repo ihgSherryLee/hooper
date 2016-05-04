@@ -198,7 +198,6 @@ var app = express();
 var bodyParser = require('body-parser');
 var busboy = require('connect-busboy'); 
 
-//加入上传图片的中间件
 // var mysql      = require('mysql');
 // var connection = mysql.createConnection({
 //   host     : 'localhost',

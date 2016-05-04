@@ -98,25 +98,6 @@
   import cookie from './../assets/scripts/cookie.js'
   import wangEditor from 'wangeditor/dist/js/wangEditor'
 
-  // 配置上传
-  // function uploadInit () {
-  //   var $uploadIcon = $('.upload-icon-container')
-  //   var upfile = new E.UploadFile({
-  //     editor: editor,
-  //     uploadUrl: uploadImgUrl,
-  //     timeout: uploadTimeout,
-  //     fileAccept: 'image/*' // 只允许选择图片
-  //   })
-  //   $uploadIcon.click(function (e) {
-  //     upfile.selectFiles()
-  //   })
-  //   var data = new FormData()
-  //   Vue.http.post('/api/uploadPhoto?user=10000', data, {emulateJson: true}).then(function (response) {
-  //     $('.img img').attr('src', '/' + response.data.path)
-  //   }, function () {
-  //   })
-  // }
-
   module.exports = {
     data: function () {
       return {
@@ -189,8 +170,6 @@
         // onchange 事件中更新数据
         self.editorContent = editor.$txt.html()
       }
-      // editor.config.customUpload = true  // 配置自定义上传
-      // editor.config.customUploadInit = uploadInit  // 配置上传事件
       editor.create()
     }
   }
