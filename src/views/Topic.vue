@@ -91,7 +91,7 @@
       console.log(topicId)
       Vue.http.get('/api/getTopicQuestion?topicId=' + topicId + '&user=' + user).then(function (response) {
         console.log(response.data)
-        self.topic = response.data.topic
+        self.topic = response.data.topic[0]
         self.question = response.data.question
       }, function () {
       })

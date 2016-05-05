@@ -21,7 +21,7 @@
     height: 38px;
     float: left;
     margin-top: 3px;
-    a {
+    a img {
       display: block;
       width: 38px;
       height: 38px;

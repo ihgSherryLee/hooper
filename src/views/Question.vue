@@ -130,10 +130,9 @@
     ready: function () {
       var self = this
       var account = cookie.getCookie('account')
-      var data = {}
-      data.account = account
       console.log(account)
-      Vue.http.get('/api/getQuestion?user=10000&questionId=1', data).then(function (response) {
+      var questionId = self.$route.params.questionId
+      Vue.http.get('/api/getQuestion?user=10000&questionId=' + questionId).then(function (response) {
         self.tag = response.data.tag
         self.question = response.data.question[0]
         self.answer = response.data.answer
@@ -162,10 +161,6 @@
         'insertcode'
       ]
       editor.config.uploadImgUrl = '/api/uploadPhoto'
-      data = new FormData()
-      editor.config.uploadParams = {
-        data: data
-      }
       editor.onchange = function () {
         // onchange 事件中更新数据
         self.editorContent = editor.$txt.html()

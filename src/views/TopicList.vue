@@ -60,7 +60,7 @@
       <div class="topic-list">
         <div class="topic-item" v-for="item in topics">
           <a v-link="{name: 'topic', params: {topicId: item.topicId}}">
-            <img src="" alt="">
+            <img src="{{item.topicImg}}" alt="">
             <strong>{{item.topicName}}</strong>
           </a>
           <p>{{item.description}}</p>

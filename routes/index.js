@@ -1,16 +1,16 @@
-// var mysql      = require('mysql');
+var mysql      = require('mysql');
 var async = require('async');
 var fs = require('fs');
 var url = require('url');
 var path = require('path');
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'hooper',
-//   password : 'hooper',
-//   database : 'hooper'
-// });
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'hooper',
+  password : 'hooper',
+  database : 'hooper'
+});
 
-// connection.connect();
+connection.connect();
 
 function signIn(req, res) {
   var data = req.body
@@ -100,15 +100,61 @@ function getTopicCat (req, res) {
 function getTopicQuestion (req, res) {
   var topicId = req.query.topicId
   var user = req.query.user
+  console.log(topicId);
   var sqls = {
     topic: 'SELECT topicId, topicName, topicImg FROM topics WHERE topicId = ' + topicId,
-    question: 'SELECT questionId, questionTitle FROM questions LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId WHERE topicId = ' + topicId,
+    question: 'SELECT questions.questionId, questionTitle FROM questions LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId WHERE topicId = ' + topicId,
   }
-  console.log(query);
-  connection.query(query, function(err, rows, fields) {
-    if (err) throw err;
-    
-    res.send({data: rows})
+  var data = {}
+  async.forEachOf(sqls, function(value, key, callback) {
+  // 遍历每条SQL并执行
+    connection.query(value, function(err, results) {
+      if(err) {
+        callback(err);
+      } else {
+        data[key] = results;
+        callback();
+      }
+    });
+  }, function(err) {
+    // 所有SQL执行完成后回调
+    if(err) {
+      console.log(err);
+    } else {
+      async.forEachOf(data.question, function(value, key, callback) {
+      // 遍历每条SQL并执行
+        var query = 'SELECT * FROM answers LEFT JOIN users ON answers.answererId = users.userId WHERE questionId = ' + value.questionId + ' LIMIT 3'
+        connection.query(query, function(err, results) {
+          if(err) {
+            callback(err);
+          } else {
+            value.answer = results;
+            callback();
+          }
+        });
+      }, function(err) {
+        // 所有SQL执行完成后回调
+        if(err) {
+          console.log(err);
+        } else {
+          console.log(data);
+          res.send(data)
+        }
+      });
+      // forEach是同步的？
+      // console.log(data.question);
+      // data.question.forEach(function (element, index) {
+      //   console.log(index);
+      //   var query = 'SELECT * FROM answers LEFT JOIN users ON answers.answererId = users.userId WHERE questionId = ' + element.questionId + ' LIMIT 3'
+      //   connection.query(query, function(err, results) {
+      //     if(err) {
+      //       throw err;
+      //     } else {
+      //       element.answer = results;
+      //     }
+      //   });
+      // })
+    }
   });
 }
 
@@ -178,18 +224,6 @@ function getQuestion (req, res) {
     if(err) {
       console.log(err);
     } else {
-      // forEach是同步的？
-      data.question.forEach(function (index) {
-        var query = 'SELECT * FROM answers LEFT JOIN users ON answers.answererId = users.userId WHERE questionId = ' + data.question[index].questionId + 'LIMIT 3'
-        connection.query(query, function(err, results) {
-          if(err) {
-            callback(err);
-          } else {
-            data.question[index].answer = results;
-            callback();
-          }
-        });
-      })
       console.log(data);
       res.send(data)
     }
@@ -307,7 +341,7 @@ module.exports = function (app) {
   app.post('/getTopic', getTopic);
   app.get('/getTopicCat', getTopicCat);
   // 话题下的问题
-  app.post('/getTopicQuestion', getTopicQuestion);
+  app.get('/getTopicQuestion', getTopicQuestion);
   app.post('/followTopic', followTopic);
   app.post('/unfollowTopic', unfollowTopic);
   app.post('/getAnswer', getAnswer);
