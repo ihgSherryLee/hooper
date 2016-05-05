@@ -99,9 +99,16 @@
 </style>
 
 <template>
+  <globle-header></globle-header>
   <div class="main-wrap">
     <div class="main-content-inner">
-      <div class="news">最新动态</div>
+      <div class="search-tab nav">
+        <ul>
+          <li class="nav-tab"><a v-link="{name:'search',params:{type:'content',keyword:$route.params.keyword}}">内容</a></li>
+          <li class="nav-tab"><a v-link="{name:'search',params:{type:'people',keyword:keyword}}">用户</a></li>
+          <li class="nav-tab"><a v-link="{name:'search',params:{type:'topic',keyword:keyword}}">话题</a></li>
+        </ul>
+      </div>
       <div class="news-list-detail" v-for="item in items">
         <div class="avatar">
           <a href="#"><img src="{{item.topicImg}}"></a>
@@ -140,6 +147,7 @@
 </template>
 
 <script>
+  import GlobleHeader from './../components/GlobleHeader'
   import cookie from './../assets/scripts/cookie.js'
 
   module.exports = {
@@ -159,11 +167,16 @@
         })
       }
     },
+    components: {
+      GlobleHeader
+    },
     ready: function () {
       var self = this
+      var type = self.$route.params.type
+      var keyword = self.$route.params.keyword
       var account = cookie.getCookie('account')
       console.log(account)
-      Vue.http.get('/api/getIndex?user=10000').then(function (response) {
+      Vue.http.get('/api/search?user=10000&type=' + type + '&keyword=' + keyword).then(function (response) {
         self.items = response.data
         console.log(self.items)
       }, function () {

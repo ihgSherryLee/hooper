@@ -17,6 +17,7 @@ import Profile from './views/Profile'
 import TopicList from './views/TopicList'
 import Topic from './views/Topic'
 import Question from './views/Question'
+import Search from './views/Search'
 router.map({
   '/login': {
     component: Login
@@ -43,6 +44,10 @@ router.map({
   '/question/:questionId': {
     name: 'question',
     component: Question
+  },
+  '/search/:type/:keyword': {
+    name: 'search',
+    component: Search
   }
 })
 router.start(App, 'app')

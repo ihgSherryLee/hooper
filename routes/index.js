@@ -1,16 +1,16 @@
-var mysql      = require('mysql');
+// var mysql      = require('mysql');
 var async = require('async');
 var fs = require('fs');
 var url = require('url');
 var path = require('path');
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'hooper',
-  password : 'hooper',
-  database : 'hooper'
-});
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'hooper',
+//   password : 'hooper',
+//   database : 'hooper'
+// });
 
-connection.connect();
+// connection.connect();
 
 function signIn(req, res) {
   var data = req.body
@@ -98,7 +98,12 @@ function getTopicCat (req, res) {
 }
 
 function getTopicQuestion (req, res) {
-  var query = 'SELECT DISTINCT topicCat FROM topics'
+  var topicId = req.query.topicId
+  var user = req.query.user
+  var sqls = {
+    topic: 'SELECT topicId, topicName, topicImg FROM topics WHERE topicId = ' + topicId,
+    question: 'SELECT questionId, questionTitle FROM questions LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId WHERE topicId = ' + topicId,
+  }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
@@ -173,6 +178,18 @@ function getQuestion (req, res) {
     if(err) {
       console.log(err);
     } else {
+      // forEach是同步的？
+      data.question.forEach(function (index) {
+        var query = 'SELECT * FROM answers LEFT JOIN users ON answers.answererId = users.userId WHERE questionId = ' + data.question[index].questionId + 'LIMIT 3'
+        connection.query(query, function(err, results) {
+          if(err) {
+            callback(err);
+          } else {
+            data.question[index].answer = results;
+            callback();
+          }
+        });
+      })
       console.log(data);
       res.send(data)
     }
@@ -269,6 +286,19 @@ function up (req, res) {
   });
 }
 
+function search (req, res) {
+  // to do 检测同一用户点赞
+  var type = req.query.type
+  var keyword = req.query.keyword
+  var query = 'UPDATE answers SET upNum = ' + upNum + ' WHERE answerId = ' + answerId
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send({status: true})
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
@@ -276,6 +306,7 @@ module.exports = function (app) {
   app.post('/changeUserInfo', changeUserInfo);
   app.post('/getTopic', getTopic);
   app.get('/getTopicCat', getTopicCat);
+  // 话题下的问题
   app.post('/getTopicQuestion', getTopicQuestion);
   app.post('/followTopic', followTopic);
   app.post('/unfollowTopic', unfollowTopic);
@@ -290,4 +321,6 @@ module.exports = function (app) {
   app.post('/uploadPhoto', uploadPhoto);
   // 赞同
   app.get('/up', up);
+  // 查询
+  app.get('/search', search);
 };

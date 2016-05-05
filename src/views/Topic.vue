@@ -19,31 +19,31 @@
   <div class="main-wrap">
     <div class="main-content-inner">
       <div class="topic-title">
-        <img src="" alt="">
-        <span>{{topicName}}</span>
+        <img src="{{topic.topicImg}}">
+        <span>{{topic.topicName}}</span>
       </div>
       <div class="question-list">
-        <div class="news-list-detail">
+        <div class="news-list-detail" v-for="item in question">
           <div class="feed-main">
             <div class="content">
-              <h2><a href="#">程序员都有哪些强迫症行为？</a></h2>
+              <h2><a v-link="{name:'question',params:{questionId:item.questionId}}">{{item.questionTitle}}</a></h2>
             </div>
-            <div class="entry-body">
-              <div class="vote">
-                <button class="vote-count">111</button>
+            <div class="entry-body" v-for="ans in item.answer">
+              <div class="votebar">
+                <button href="#" @click="up(ans.answerId, ans.upNum)" class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{ans.upNum}}</span></button>
+                <button href="#" class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
               </div>
               <div class="answer-deatail">
                 <div class="author">
-                  <a href="#">XXX</a>,啊啊啊啊
+                  <a href="#">ans.userName</a>,啊啊啊啊
                 </div>
-                <div class="vote-info"></div>
                 <div class="answer">
-                  习惯按Ctrl+S⋯⋯有时候看网页看着看着就Ctrl+S一下，之后突然反应过来不对⋯⋯看到bug就想改⋯⋯即使不是自己的bug⋯⋯还喜欢找bug，看到登录框就想试试能不能SQL注入⋯⋯有时候还会抓包或者发假包⋯⋯看到一个软件就会想自己要做的话怎么做⋯⋯
-                  <span class="answer-date">发布于 2016-01-15</span>
+                  {{{ans.answerText}}}
                 </div>
               </div>
               <div class="feed-meta">
                 <div class="meta-panel">
+                  <span class="answer-date">发布于 {{ans.date}}</span>
                   <a href="#">关注问题</a>
                   <a href="#">评论</a>
                   <a href="#">收起</a>
@@ -71,8 +71,8 @@
   module.exports = {
     data: function () {
       return {
-        topicName: '游戏',
-        questionList: []
+        topic: {},
+        question: []
       }
     },
     methods: {
@@ -86,19 +86,13 @@
     },
     ready: function () {
       var self = this
-      var account = cookie.getCookie('account')
+      var user = cookie.getCookie('account')
       var topicId = self.$route.params.topicId
       console.log(topicId)
-      var data = {}
-      data.account = account
-      console.log(account)
-      Vue.http.get('/api/getTopic', data).then(function (response) {
+      Vue.http.get('/api/getTopicQuestion?topicId=' + topicId + '&user=' + user).then(function (response) {
         console.log(response.data)
-        self.userName = response.data.userId
-        self.userImg = response.data.userImg
-        self.gender = response.data.gender
-        self.headline = response.data.headline
-        self.description = response.data.description
+        self.topic = response.data.topic
+        self.question = response.data.question
       }, function () {
       })
     }
