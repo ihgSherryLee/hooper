@@ -1,100 +1,20 @@
 <style lang="less">
-  .main-wrap {
-    margin: auto;
-    width: 960px;
-  }
-  .main-content-inner {
-    width: 700px;
-    .news {
-      margin-bottom: 10px;
-    }
-  }
-  .news-list-detail {
-    padding: 10px 0;
-    border-top: 1px solid #ccc;
-  }
-  .news-list-detail.first {
-    border-top: 1px solid #bdbdbd;
-  }
-  .avatar {
-    width: 38px;
-    height: 38px;
-    float: left;
-    margin-top: 3px;
-    a {
-      display: block;
-      width: 38px;
-      height: 38px;
-    }
-  }
-  .feed-main {
-    margin-left: 48px;
-    .source {
-      color: #999;
-      a {
-        color: #999;
+  .user {
+    .item {
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      .user-card {
+        img {
+          width: 50px;
+          height: 50px;
+          margin-right: 1em;
+          border-radius: 4px;
+        }
+        .avator-link,.user-info {
+          float: left;
+        }
       }
     }
-  }
-  .content {
-    h2 {
-      margin: 10px 0;
-    }
-    .question-deatail {
-      display: none;
-    }
-  }
-  h2,h3,h4,h5 {
-    font-weight: 800;
-    font-size: 14px;
-    outline: 0;
-  }
-  .entry-body {
-    position: relative;
-    margin-top: 5px;
-    .vote {
-      position: absolute;
-      left: -48px;
-      display: none;
-      width: 40px;
-      .vote-count {
-        border: none;
-        border-radius: 2px;
-        background: rgba(204,91,91,0.4);
-        color: #d20000;
-      }
-      .vote-count:hover {
-        background: #d20000;
-        color: #fff;
-      }
-    }
-    .votebar {
-      float: left;
-      margin-left: -48px;
-      width: 40px;
-      .up,.down {
-        margin-top: 10px;
-        width: 40px;
-        border: none;
-        border-radius: 2px;
-        background: rgba(204,91,91,0.4);
-        color: #d20000;
-      }
-      .up:hover,.down:hover {
-        width: 40px;
-        border: none;
-        border-radius: 2px;
-        background: #d20000;
-        color: #fff;
-      }
-    }
-  }
-  .author {
-    margin-bottom: 2px;
-  }
-  .vote-info {
-    font-size: 12px;
-    color: #ccc;
   }
 </style>
 
@@ -103,43 +23,61 @@
   <div class="main-wrap">
     <div class="main-content-inner">
       <div class="search-tab nav">
-        <ul>
-          <li class="nav-tab"><a v-link="{name:'search',params:{type:'content',keyword:$route.params.keyword}}">内容</a></li>
-          <li class="nav-tab"><a v-link="{name:'search',params:{type:'people',keyword:keyword}}">用户</a></li>
+        <ul class="nav nav-tabs">
+          <li class="nav-tab active"><a v-link="{name:'search',params:{type:'content',keyword:$route.params.keyword}}">内容</a></li>
+          <li class="nav-tab"><a v-link="{name:'search',params:{type:'user',keyword:keyword}}">用户</a></li>
           <li class="nav-tab"><a v-link="{name:'search',params:{type:'topic',keyword:keyword}}">话题</a></li>
         </ul>
       </div>
-      <div class="news-list-detail" v-for="item in items">
-        <div class="avatar">
-          <a href="#"><img src="{{item.topicImg}}"></a>
-        </div>
-        <div class="feed-main">
-          <div class="source">来自<a <a href="#" v-link="{name:'topic',params:{topicId:item.topicId}}">{{item.topicName}}</a></div>
-          <div class="content">
+      <div v-if="$route.params.type === 'content'" class="list content" >
+        <div class="item" v-for="item in items">
+          <div class="feed-main">
             <h2><a href="#" v-link="{name:'question',params:{questionId:item.questionId}}">{{item.questionTitle}}</a></h2>
+            <div class="entry-body">
+              <div class="votebar">
+                <button href="#" @click="up(item.answerId, item.upNum)" class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
+                <button href="#" class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
+              </div>
+              <div class="answer-deatail">
+                <div class="author">
+                  <a href="#">{{item.userName}}</a>,啊啊啊啊
+                </div>
+                <div class="answer">
+                  {{{item.answerText}}}
+                </div>
+              </div>
+              <div class="feed-meta">
+                <div class="meta-panel">
+                  <span class="answer-date">发布于 {{item.date}}</span>
+                  <a href="#">关注问题</a>
+                  <a href="#">评论</a>
+                  <a href="#">收起</a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="entry-body">
-            <div class="votebar">
-              <button href="#" @click="up(item.answerId, item.upNum)" class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
-              <button href="#" class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
-            </div>
-            <div class="answer-deatail">
-              <div class="author">
-                <a href="#">{{item.userName}}</a>,啊啊啊啊
-              </div>
-              <div class="answer">
-                {{{item.answerText}}}
-              </div>
-            </div>
-            <div class="feed-meta">
-              <div class="meta-panel">
-                <span class="answer-date">发布于 {{item.date}}</span>
-                <a href="#">关注问题</a>
-                <a href="#">评论</a>
-                <a href="#">收起</a>
-              </div>
+        </div>
+      </div>
+      <div v-if="$route.params.type === 'user'" class="list user">
+        <div class="item" v-for="item in items">
+          <div class="user-card clearfix">
+            <a class="avator-link" href="#"><img src="" alt=""></a>
+            <div class="user-info">
+              <a class="name-link" href="#">{item.userName}}</a>
+              <p>{item.userIntro}}</p>
             </div>
           </div>
+        </div>
+      </div>
+      <div v-if="$route.params.type === 'topic'" class="list topic">
+        <div class="item" v-for="item in items">
+          <a v-link="{name: 'topic', params: {topicId: item.topicId}}">
+            <img src="{{item.topicImg}}" alt="">
+            <strong>{{item.topicName}}</strong>
+          </a>
+          <p>{{item.description}}</p>
+          <a v-if="!item.userId" class="follow" href="#" @click="follow($index,item.topicId)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
+          <a v-else class="follow" href="#" @click="unfollow($index, item.topicId)">取消关注</a>
         </div>
       </div>
     </div>

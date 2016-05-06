@@ -141,19 +141,6 @@ function getTopicQuestion (req, res) {
           res.send(data)
         }
       });
-      // forEach是同步的？
-      // console.log(data.question);
-      // data.question.forEach(function (element, index) {
-      //   console.log(index);
-      //   var query = 'SELECT * FROM answers LEFT JOIN users ON answers.answererId = users.userId WHERE questionId = ' + element.questionId + ' LIMIT 3'
-      //   connection.query(query, function(err, results) {
-      //     if(err) {
-      //       throw err;
-      //     } else {
-      //       element.answer = results;
-      //     }
-      //   });
-      // })
     }
   });
 }
@@ -324,12 +311,19 @@ function search (req, res) {
   // to do 检测同一用户点赞
   var type = req.query.type
   var keyword = req.query.keyword
-  var query = 'UPDATE answers SET upNum = ' + upNum + ' WHERE answerId = ' + answerId
+  var query
+  if (type === 'content') {
+    query = 'SELECT answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answers.answerText LIKE %' + keyword + '%'
+  } else if (type === user) {
+    query = 'SELECT userId, userName, userImg, headline FROM users WHERE userName LIKE "%' + keyword + '%"'
+  } else {
+    query = 'SELECT topicId, topicName, topicImg FROM topics WHERE topicName LIKE %' + keyword + '% OR topicDesc LIKE "%' + keyword + '%"' 
+  }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
     
-    res.send({status: true})
+    res.send(rows)
   });
 }
 
