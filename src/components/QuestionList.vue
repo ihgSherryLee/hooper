@@ -79,6 +79,9 @@
         border-radius: 2px;
         background: rgba(204,91,91,0.4);
         color: #d20000;
+        span {
+          width: 100%;
+        }
       }
       .up:hover,.down:hover {
         width: 40px;

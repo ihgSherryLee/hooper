@@ -1,4 +1,7 @@
 <style lang="less">
+  .list {
+    margin-top: 15px;
+  }
   .user {
     .item {
       padding: 15px 0;
@@ -24,9 +27,9 @@
     <div class="main-content-inner">
       <div class="search-tab nav">
         <ul class="nav nav-tabs">
-          <li class="nav-tab active"><a v-link="{name:'search',params:{type:'content',keyword:$route.params.keyword}}">内容</a></li>
-          <li class="nav-tab"><a v-link="{name:'search',params:{type:'user',keyword:keyword}}">用户</a></li>
-          <li class="nav-tab"><a v-link="{name:'search',params:{type:'topic',keyword:keyword}}">话题</a></li>
+          <li class="nav-tab" :class="{'active':$route.params.type==='content'}"><a v-link="{name:'search',params:{type:'content',keyword:$route.params.keyword}}">内容</a></li>
+          <li class="nav-tab" :class="{'active':$route.params.type==='user'}"><a v-link="{name:'search',params:{type:'user',keyword:$route.params.keyword}}">用户</a></li>
+          <li class="nav-tab" :class="{'active':$route.params.type==='topic'}"><a v-link="{name:'search',params:{type:'topic',keyword:$route.params.keyword}}">话题</a></li>
         </ul>
       </div>
       <div v-if="$route.params.type === 'content'" class="list content" >
@@ -40,7 +43,7 @@
               </div>
               <div class="answer-deatail">
                 <div class="author">
-                  <a href="#">{{item.userName}}</a>,啊啊啊啊
+                  <a v-link="{name:'user',params:{userId:item.answererId}}">{{item.userName}}</a>,{{item.headline}}
                 </div>
                 <div class="answer">
                   {{{item.answerText}}}
@@ -61,16 +64,16 @@
       <div v-if="$route.params.type === 'user'" class="list user">
         <div class="item" v-for="item in items">
           <div class="user-card clearfix">
-            <a class="avator-link" href="#"><img src="" alt=""></a>
+            <a class="avator-link" v-link="{name:'user',params:{userId:item.userId}}"><img src="" alt=""></a>
             <div class="user-info">
-              <a class="name-link" href="#">{item.userName}}</a>
-              <p>{item.userIntro}}</p>
+              <a class="name-link" v-link="{name:'user',params:{userId:item.userId}}">{{item.userName}}</a>
+              <p>{{item.headline}}</p>
             </div>
           </div>
         </div>
       </div>
-      <div v-if="$route.params.type === 'topic'" class="list topic">
-        <div class="item" v-for="item in items">
+      <div v-if="$route.params.type === 'topic'" class="list topic-list clearfix">
+        <div class="topic-item" v-for="item in items">
           <a v-link="{name: 'topic', params: {topicId: item.topicId}}">
             <img src="{{item.topicImg}}" alt="">
             <strong>{{item.topicName}}</strong>
@@ -86,7 +89,7 @@
 
 <script>
   import GlobleHeader from './../components/GlobleHeader'
-  import cookie from './../assets/scripts/cookie.js'
+  // import cookie from './../assets/scripts/cookie.js'
 
   module.exports = {
     data: function () {
@@ -103,22 +106,58 @@
           console.log(self.items)
         }, function () {
         })
+      },
+      follow: function (index, topic) {
+        var self = this
+        var data = {}
+        console.log(index)
+        data.topicId = topic
+        self.topics[index].userId = true
+        Vue.http.post('/api/followTopic', data).then(function (response) {
+          console.log(response.data)
+          self.topics[index].userId = true
+        }, function () {
+        })
+      },
+      unfollow: function (index, topic) {
+        var self = this
+        var data = {}
+        data.topicId = topic
+        self.topics[index].userId = null
+        Vue.http.post('/api/unfollowTopic', data).then(function (response) {
+          console.log(response.data)
+          self.topics[index].userId = null
+        }, function () {
+        })
       }
     },
     components: {
       GlobleHeader
     },
-    ready: function () {
-      var self = this
-      var type = self.$route.params.type
-      var keyword = self.$route.params.keyword
-      var account = cookie.getCookie('account')
-      console.log(account)
-      Vue.http.get('/api/search?user=10000&type=' + type + '&keyword=' + keyword).then(function (response) {
-        self.items = response.data
-        console.log(self.items)
-      }, function () {
-      })
+    // ready: function () {
+    //   var self = this
+    //   var type = self.$route.params.type
+    //   var keyword = self.$route.params.keyword
+    //   // var account = cookie.getCookie('account')
+    //   window.alert(type)
+    //   Vue.http.get('/api/search?user=10000&type=' + type + '&keyword=' + keyword).then(function (response) {
+    //     self.items = response.data
+    //     console.log(self.items)
+    //   }, function () {
+    //   })
+    // },
+    route: {
+      data: function (transition) {
+        var self = this
+        var type = self.$route.params.type
+        var keyword = self.$route.params.keyword
+        // var account = cookie.getCookie('account')
+        Vue.http.get('/api/search?user=10000&type=' + type + '&keyword=' + keyword).then(function (response) {
+          self.items = response.data
+          console.log(self.items)
+        }, function () {
+        })
+      }
     }
   }
 </script>

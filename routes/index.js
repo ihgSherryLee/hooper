@@ -310,21 +310,78 @@ function up (req, res) {
 function search (req, res) {
   // to do 检测同一用户点赞
   var type = req.query.type
+  console.log(type);
   var keyword = req.query.keyword
   var query
   if (type === 'content') {
-    query = 'SELECT answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answers.answerText LIKE %' + keyword + '%'
-  } else if (type === user) {
+    query = 'SELECT answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answers.answerText LIKE "%' + keyword + '%"'
+  } else if (type === 'user') {
     query = 'SELECT userId, userName, userImg, headline FROM users WHERE userName LIKE "%' + keyword + '%"'
   } else {
-    query = 'SELECT topicId, topicName, topicImg FROM topics WHERE topicName LIKE %' + keyword + '% OR topicDesc LIKE "%' + keyword + '%"' 
+    query = 'SELECT topicId, topicName, topicImg FROM topics WHERE topicName LIKE "%' + keyword + '%" OR topicDesc LIKE "%' + keyword + '%"' 
   }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
-    
+    console.log(rows);
     res.send(rows)
   });
+}
+
+function getUser (req, res) {
+  // 用户近况
+  var user = req.query.user
+  var questionId = req.query.questionId
+  var sqls = {
+    user: 'SELECT userName, userImg, gender, headline, description FROM users WHERE userId = "' + user + '"',
+    question: 'SELECT * FROM questions WHERE questionerId = "' + user + '" LIMIT 3',
+    answer: 'SELECT * FROM answers LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answererId = "' + user + '" LIMIT 3'
+  }
+  var data = {}
+  async.forEachOf(sqls, function(value, key, callback) {
+  // 遍历每条SQL并执行
+    connection.query(value, function(err, results) {
+      if(err) {
+        callback(err);
+      } else {
+        data[key] = results;
+        callback();
+      }
+    });
+  }, function(err) {
+    // 所有SQL执行完成后回调
+    if(err) {
+      console.log(err);
+    } else {
+      console.log(data);
+      res.send(data)
+    }
+  });
+}
+
+function searchTopic (req, res) {
+  var topic = req.query.topic
+  var query = 'SELECT topicId, topicName, topicImg FROM topics WHERE topicName LIKE "%' + topic + '%"'
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    console.log(rows);
+    res.send(rows)
+  });
+}
+
+function question(req, res) {
+  var data = req.body
+  console.log(data)
+  var user = req.query.user
+  var questionTitle = data.questionTitle
+  var questionDesc = data.questionDesc
+  var topics = data.topics
+  var query = 'INSERT INTO questions(questionTitle,questionDesc,questionerId) VALUE ("' + questionTitle + '","' + questionDesc + '","' + user + '")'
+  console.log(query)
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+  });
+  res.send('OK');
 }
 
 module.exports = function (app) {
@@ -351,4 +408,10 @@ module.exports = function (app) {
   app.get('/up', up);
   // 查询
   app.get('/search', search);
+  // 用户页数据
+  app.get('/getUser', getUser);
+  // 提问页查询选择话题
+  app.get('/searchTopic', searchTopic);
+  // 提问
+  app.post('/question', question);
 };
