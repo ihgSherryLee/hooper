@@ -128,17 +128,6 @@
       GlobleHeader
     },
     ready: function () {
-      var self = this
-      var account = cookie.getCookie('account')
-      console.log(account)
-      var questionId = self.$route.params.questionId
-      Vue.http.get('/api/getQuestion?user=10000&questionId=' + questionId).then(function (response) {
-        self.tag = response.data.tag
-        self.question = response.data.question[0]
-        self.answer = response.data.answer
-        self.totalAnswer = self.answer.length
-      }, function () {
-      })
       var editor = new wangEditor('editor-trigger')
       editor.config.menus = [
         'bold',
@@ -166,6 +155,21 @@
         self.editorContent = editor.$txt.html()
       }
       editor.create()
+    },
+    route: {
+      data: function (transition) {
+        var self = this
+        var account = cookie.getCookie('account')
+        console.log(account)
+        var questionId = self.$route.params.questionId
+        Vue.http.get('/api/getQuestion?user=10000&questionId=' + questionId).then(function (response) {
+          self.tag = response.data.tag
+          self.question = response.data.question[0]
+          self.answer = response.data.answer
+          self.totalAnswer = self.answer.length
+        }, function () {
+        })
+      }
     }
   }
 </script>

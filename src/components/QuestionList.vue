@@ -72,7 +72,7 @@
       float: left;
       margin-left: -48px;
       width: 40px;
-      .up,.down {
+      .up {
         margin-top: 10px;
         width: 40px;
         border: none;
@@ -83,7 +83,7 @@
           width: 100%;
         }
       }
-      .up:hover,.down:hover {
+      .up:hover,.up.active {
         width: 40px;
         border: none;
         border-radius: 2px;
@@ -116,8 +116,7 @@
           </div>
           <div class="entry-body">
             <div class="votebar">
-              <button href="#" @click="up(item.answerId, item.upNum)" class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
-              <button href="#" class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
+              <button @click="update($index, item.answerId, item.upAnswerId)" class="up" :class="{active: item.upAnswerId}" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
             </div>
             <div class="answer-deatail">
               <div class="author">
@@ -152,14 +151,25 @@
       }
     },
     methods: {
-      up: function (answerId, upNum) {
-        console.log(answerId)
-        console.log(upNum)
-        Vue.http.get('/api/up?answerId=' + answerId + '&upNum=' + upNum).then(function (response) {
-          self.items = response.data
-          console.log(self.items)
-        }, function () {
-        })
+      update: function (index, answerId, upAnswerId) {
+        var self = this
+        var user = 10000
+        console.log(upAnswerId)
+        if (!upAnswerId) {
+          Vue.http.get('/api/updateUp?user=' + user + '&type=up&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
+            self.items[index].upNum++
+            self.items[index].upAnswerId = true
+            console.log(self.items)
+          }, function () {
+          })
+        } else {
+          Vue.http.get('/api/updateUp?user=' + user + '&type=down&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
+            self.items[index].upNum--
+            self.items[index].upAnswerId = false
+            console.log(self.items)
+          }, function () {
+          })
+        }
       }
     },
     ready: function () {

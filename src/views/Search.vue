@@ -7,6 +7,7 @@
       padding: 15px 0;
       border-bottom: 1px solid #eee;
       .user-card {
+        position: relative;
         img {
           width: 50px;
           height: 50px;
@@ -15,6 +16,11 @@
         }
         .avator-link,.user-info {
           float: left;
+        }
+        .follow {
+          position: absolute;
+          top: 0;
+          right: 0;
         }
       }
     }
@@ -38,8 +44,7 @@
             <h2><a href="#" v-link="{name:'question',params:{questionId:item.questionId}}">{{item.questionTitle}}</a></h2>
             <div class="entry-body">
               <div class="votebar">
-                <button href="#" @click="up(item.answerId, item.upNum)" class="up" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
-                <button href="#" class="down" title="反对，不会显示你的姓名"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
+                <button @click="update($index, item.answerId, item.upAnswerId)" class="up" :class="{active: item.upAnswerId}" title="赞同"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span>{{item.upNum}}</span></button>
               </div>
               <div class="answer-deatail">
                 <div class="author">
@@ -68,6 +73,8 @@
             <div class="user-info">
               <a class="name-link" v-link="{name:'user',params:{userId:item.userId}}">{{item.userName}}</a>
               <p>{{item.headline}}</p>
+              <a v-if="!item.friendId" class="follow" href="#" @click="followUser($index,item.userId)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
+              <a v-else class="follow" href="#" @click="unfollowUser($index, item.userId)">取消关注</a>
             </div>
           </div>
         </div>
@@ -98,21 +105,32 @@
       }
     },
     methods: {
-      up: function (answerId, upNum) {
-        console.log(answerId)
-        console.log(upNum)
-        Vue.http.get('/api/up?answerId=' + answerId + '&upNum=' + upNum).then(function (response) {
-          self.items = response.data
-          console.log(self.items)
-        }, function () {
-        })
+      update: function (index, answerId, upAnswerId) {
+        var self = this
+        var user = 10000
+        console.log(upAnswerId)
+        if (!upAnswerId) {
+          Vue.http.get('/api/updateUp?user=' + user + '&type=up&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
+            self.items[index].upNum++
+            self.items[index].upAnswerId = true
+            console.log(self.items)
+          }, function () {
+          })
+        } else {
+          Vue.http.get('/api/updateUp?user=' + user + '&type=down&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
+            self.items[index].upNum--
+            self.items[index].upAnswerId = false
+            console.log(self.items)
+          }, function () {
+          })
+        }
       },
       follow: function (index, topic) {
         var self = this
         var data = {}
         console.log(index)
         data.topicId = topic
-        self.topics[index].userId = true
+        self.items[index].userId = true
         Vue.http.post('/api/followTopic', data).then(function (response) {
           console.log(response.data)
           self.topics[index].userId = true
@@ -123,10 +141,32 @@
         var self = this
         var data = {}
         data.topicId = topic
-        self.topics[index].userId = null
+        self.items[index].userId = null
         Vue.http.post('/api/unfollowTopic', data).then(function (response) {
           console.log(response.data)
           self.topics[index].userId = null
+        }, function () {
+        })
+      },
+      followUser: function (index, friendId) {
+        var self = this
+        var user = 10000
+        console.log(index)
+        self.items[index].friendId = true
+        console.log()
+        Vue.http.get('/api/followUser?user=' + user + '&friendId=' + friendId).then(function (response) {
+          console.log(response.data)
+          self.items[index].friendId = true
+        }, function () {
+        })
+      },
+      unfollowUser: function (index, friendId) {
+        var self = this
+        var user = 10000
+        self.items[index].friendId = null
+        Vue.http.get('/api/unfollowUser?user=' + user + '&friendId=' + friendId).then(function (response) {
+          console.log(response.data)
+          self.items[index].friendId = null
         }, function () {
         })
       }

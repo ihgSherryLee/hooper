@@ -68,21 +68,22 @@
     width: 550px;
     margin: auto;
     margin-top: 50px;
-    padding: 15px;
     border: 1px solid #eee;
     border-radius: 4px;
     background: #fff;
     .question-dialog-title {
       position: relative;
-      height: 30px;
+      padding: 5px 15px;
       line-height: 30px;
-      background: #fff;
+      color: #FFF;
+      background: #1676D7;
       .question-dialog-title-close {
         position: absolute;
         right: 0;
       }
     }
     .question-dialog-content {
+      padding: 15px;
       textarea {
         width: 100%;
       }
@@ -199,7 +200,7 @@
             </div>
           </div>
         </div>
-        <div class="question-btn">
+        <div class="question-btn clearfix">
           <button @click="question">发布</button>
         </div>
       </div>
@@ -256,8 +257,14 @@
         data.topics = self.topics
         var user = 10000
         Vue.http.post('/api/question?user=' + user, data).then(function (response) {
-          self.tags = response.data
           console.log(response.data)
+          self.showQuestionWrap = false
+          self.$router.go({
+            name: 'question',
+            params: {
+              questionId: response.data.questionId
+            }
+          })
         }, function () {
         })
       },
@@ -267,17 +274,27 @@
         console.log(self.showQuestionWrap)
       }
     },
-    ready: function () {
-      var self = this
-      var account = cookie.getCookie('account')
-      var data = {}
-      data.account = 10000
-      console.log(account)
-      Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
-        self.user = response.data
-        console.log(response.data)
-      }, function () {
-      })
+    // ready: function () {
+    //   var self = this
+    //   var account = cookie.getCookie('account')
+    //   console.log(account)
+    //   Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
+    //     self.user = response.data
+    //     console.log(response.data)
+    //   }, function () {
+    //   })
+    // },
+    route: {
+      data: function (transition) {
+        var self = this
+        var account = cookie.getCookie('account')
+        Vue.http.get('/api/queryUser?user=' + account).then(function (response) {
+          self.user = response.data
+          self.showQuestionWrap = false
+          console.log(self.showQuestionWrap)
+        }, function () {
+        })
+      }
     }
   }
 </script>
