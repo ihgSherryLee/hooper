@@ -15,9 +15,9 @@ connection.connect();
 function signIn(req, res) {
   var data = req.body
   console.log(data)
-  var account = data.account
+  var email = data.email
   var password = data.password
-  var query = 'SELECT * FROM users WHERE email = "' + account + '"'
+  var query = 'SELECT * FROM users WHERE email = "' + email + '"'
   console.log(query)
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
@@ -31,7 +31,8 @@ function signIn(req, res) {
       tips: '密码错误,请重新输入'
     })
     else res.send({
-      status: true
+      status: true,
+      userId: rows[0].userId
     })
   });
 }
@@ -42,18 +43,26 @@ function signUp(req, res) {
   var email = data.email
   var fullname = data.fullname
   var password = data.password
-  var query = 'INSERT INTO users(email,userId,password) VALUE ("' + email + '","' + fullname + '","' + password + '")'
+  var query = 'INSERT INTO users(email,userName,password) VALUE ("' + email + '","' + fullname + '","' + password + '");'
   console.log(query)
   connection.query(query, function(err, rows, fields) {
-    if (err) throw err;
+    if (err) {
+      console.log(err)
+    } else {
+      query = 'SELECT LAST_INSERT_ID();'
+      console.log(query)
+      connection.query(query, function(err, rows, fields) {
+        if (err) throw err;
+        console.log(rows[0]);
+        res.send({userId:rows[0]['LAST_INSERT_ID()']})
+      });
+    }
   });
-  res.send(req.body);
 }
 
 function queryUser (req, res) {
-  var resData = {}
-  var account = req.query.user
-  var query = 'SELECT userName, userImg, gender, headline, description FROM users WHERE email = "' + account + '"'
+  var user = req.query.user
+  var query = 'SELECT userId, userName, password, userImg, gender, headline, description FROM users WHERE userId = ' + user + ''
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
     res.send(rows[0])
@@ -62,8 +71,7 @@ function queryUser (req, res) {
 
 function changeUserInfo (req, res) {
   var data = req.body
-  var account = data.account
-  var query = 'UPDATE users SET ' + data.key + '= "' + data.val + '" WHERE email = "' + data.account + '"'
+  var query = 'UPDATE users SET ' + data.key + '= "' + data.val + '" WHERE userId = ' + data.user + ''
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
@@ -73,17 +81,15 @@ function changeUserInfo (req, res) {
 }
 
 function getTopic (req, res) {
-  // to do 查询用户
-  var data = req.body
-  var account = data.account
-  account = 10000
-  var topicCat = data.topicCat
+  var user = req.query.user
+  var topicCat = req.query.topicCat
   // 不确定列名，会导致查询的结果中，topicName为空
-  var query = 'SELECT topics.topicId, topics.topicName, topics.topicImg, topics.topicDesc, user_topic_relationship.userId FROM topics LEFT JOIN user_topic_relationship ON topics.topicId = user_topic_relationship.topicId && userId = ' + account + ' WHERE topicCat = "' + topicCat + '";'
+  var query = 'SELECT topics.topicId, topics.topicName, topics.topicImg, topics.topicDesc, followTopic FROM topics LEFT JOIN user_topic_relationship ON topics.topicId = user_topic_relationship.topicId && userId = ' + user + ' WHERE topicCat = "' + topicCat + '";'
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
-    res.send({data: rows})
+    console.log(rows);
+    res.send(rows)
   });
 }
 
@@ -93,18 +99,19 @@ function getTopicCat (req, res) {
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
     
-    res.send({data: rows})
+    res.send(rows)
   });
 }
 
 function getTopicQuestion (req, res) {
   var topicId = req.query.topicId
   var user = req.query.user
-  console.log(topicId);
+  console.log(user);
   var sqls = {
-    topic: 'SELECT topicId, topicName, topicImg FROM topics WHERE topicId = ' + topicId,
-    question: 'SELECT questions.questionId, questionTitle FROM questions LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId WHERE topicId = ' + topicId,
+    topic: 'SELECT topics.topicId, topicName, topicImg, followTopic FROM topics LEFT JOIN user_topic_relationship ON topics.topicId = user_topic_relationship.topicId && user_topic_relationship.userId = ' + user + ' WHERE topics.topicId = ' + topicId,
+    question: 'SELECT questions.questionId, questionTitle, followQuestion FROM questions LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId LEFT JOIN user_follow_question ON questions.questionId = user_follow_question.questionId && userId = ' + user + ' WHERE topicId = ' + topicId,
   }
+  console.log(sqls);
   var data = {}
   async.forEachOf(sqls, function(value, key, callback) {
   // 遍历每条SQL并执行
@@ -123,7 +130,8 @@ function getTopicQuestion (req, res) {
     } else {
       async.forEachOf(data.question, function(value, key, callback) {
       // 遍历每条SQL并执行
-        var query = 'SELECT * FROM answers LEFT JOIN users ON answers.answererId = users.userId WHERE questionId = ' + value.questionId + ' LIMIT 3'
+        var query = 'SELECT answerId, answererId, userName, headline, answerText, upNum, date, upAnswerId FROM answers LEFT JOIN user_answer_up ON answers.AnswerId = user_answer_up.upAnswerId && user_answer_up.userId = ' + user + ' LEFT JOIN users ON answers.answererId = users.userId WHERE answers.questionId = ' + value.questionId + ' LIMIT 3'
+        console.log(query);
         connection.query(query, function(err, results) {
           if(err) {
             callback(err);
@@ -146,30 +154,21 @@ function getTopicQuestion (req, res) {
 }
 
 function followTopic (req, res) {
-  var data = req.body
-  var account = 10000
-  console.log(data);
-  var topicId = data.topicId
-  var query = 'INSERT INTO user_topic_relationship(userId, topicId) VALUE (' + account + ', ' + topicId + ')'
+  var type = req.query.type
+  var user = req.query.user
+  console.log(user);
+  var topicId = req.query.topicId
+  var query
+  if(type === 'follow') {
+    query = 'INSERT INTO user_topic_relationship(userId, topicId, followTopic) VALUE (' + user + ', ' + topicId + ', 1)'
+  } else {
+    query = 'DELETE FROM user_topic_relationship WHERE userId = ' + user + ' AND topicId = ' + topicId
+  }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
-    if (err) throw err;
+    if (err) console.log(err);
     
-    res.send({data: rows})
-  });
-}
-
-function unfollowTopic (req, res) {
-  var data = req.body
-  var account = 10000
-  console.log(data);
-  var topicId = data.topicId
-  var query = 'DELETE FROM user_topic_relationship WHERE userId = "' + account + '" AND topicId = "' + topicId + '"'
-  console.log(query);
-  connection.query(query, function(err, rows, fields) {
-    if (err) throw err;
-    
-    res.send({data: rows})
+    res.send(rows)
   });
 }
 
@@ -191,9 +190,10 @@ function getQuestion (req, res) {
   var user = req.query.user
   var questionId = req.query.questionId
   var sqls = {
-    tag: 'SELECT topicName FROM question_topic_relationship LEFT JOIN topics ON topics.topicId = question_topic_relationship.topicId WHERE questionId = "' + questionId + '"',
-    question: 'SELECT * FROM questions WHERE questionId = "' + questionId + '"',
-    answer: 'SELECT * FROM answers LEFT JOIN users on answers.answererId = users.userId WHERE questionId = "' + questionId + '"'
+    tag: 'SELECT topics.topicId, topicName FROM question_topic_relationship LEFT JOIN topics ON topics.topicId = question_topic_relationship.topicId WHERE questionId = "' + questionId + '"',
+    question: 'SELECT questions.questionId, questionTitle, questionDesc, followQuestion FROM questions LEFT JOIN user_follow_question ON questions.questionId = user_follow_question.questionId WHERE questions.questionId = "' + questionId + '"',
+    answer: 'SELECT answerId, answererId, userName, headline, answerText, upNum, date, upAnswerId FROM answers LEFT JOIN user_answer_up ON answers.AnswerId = user_answer_up.upAnswerId && user_answer_up.userId = ' + user + ' LEFT JOIN users on answers.answererId = users.userId WHERE questionId = "' + questionId + '"',
+    myAnswer: 'SELECT answerId, answerText FROM answers WHERE answererId = ' + user
   }
   var data = {}
   async.forEachOf(sqls, function(value, key, callback) {
@@ -219,7 +219,7 @@ function getQuestion (req, res) {
 
 function getIndex (req, res) {
   var user = req.query.user
-  var query = 'SELECT DISTINCT topics.topicId, topicName, topicImg, answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date FROM answers LEFT JOIN user_answer_up ON answers.AnswerId = user_answer_up.upAnswerId && user_answer_up.userId = ' + user + ' LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId LEFT JOIN topics ON question_topic_relationship.topicId = topics.topicId WHERE questions.questionId in (SELECT questionId FROM question_topic_relationship WHERE topicId IN  (SELECT topicId FROM users LEFT JOIN  user_topic_relationship ON users.userId = user_topic_relationship.userId WHERE users.userId = ' + user + ')) GROUP BY answerId'
+  var query = 'SELECT DISTINCT topics.topicId, topicName, topicImg, answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date, upAnswerId, followQuestion FROM answers LEFT JOIN user_answer_up ON answers.AnswerId = user_answer_up.upAnswerId && user_answer_up.userId = ' + user + ' LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId LEFT JOIN user_follow_question ON answers.questionId = user_follow_question.questionId && user_follow_question.userId = ' + user + ' LEFT JOIN question_topic_relationship ON questions.questionId = question_topic_relationship.questionId LEFT JOIN topics ON question_topic_relationship.topicId = topics.topicId WHERE questions.questionId in (SELECT questionId FROM question_topic_relationship WHERE topicId IN  (SELECT topicId FROM users LEFT JOIN  user_topic_relationship ON users.userId = user_topic_relationship.userId WHERE users.userId = ' + user + ')) GROUP BY answerId'
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
@@ -229,13 +229,19 @@ function getIndex (req, res) {
 }
 
 function answer (req, res) {
+  var type = req.query.type
   var data = req.body
   console.log(data);
   var questionId = data.questionId
   var user = data.user
   var text = data.text
-  var date = new Date()
-  var query = 'INSERT INTO answers(answerText, answererId, questionId, date) VALUE ("' + text + '", ' + user + ', ' + questionId + ', "' + date + '")'
+  var query
+  if (type === 'insert') {
+    query = "INSERT INTO answers(answerText, answererId, questionId, date) VALUE ('" + text + "', " + user + ", " + questionId + ", now())"
+  } else {
+    var answerId = data.answerId
+    query = "UPDATE answers SET answerText = '" + text + "' WHERE answerId = " + answerId
+  }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
@@ -246,6 +252,8 @@ function answer (req, res) {
 
 function uploadIcon (req, res) {
   // to do 删除原来的头像
+  var user = req.query.user
+  var query
   req.pipe(req.busboy);
   //接收文件上传，就执行后面匿名函数方法
   // fieldname字段名字、file文件对象、filename文件名字、encoding使用的编码、mimetype文件类型
@@ -263,7 +271,12 @@ function uploadIcon (req, res) {
     file.on('end', function(){
       var fullpath = req.headers.origin + '/' + url;
       //res.json({success: true, url: url});
-      res.send(fullpath); //返回文件url绝对路径
+      query = 'UPDATE users SET userImg = "' + fullpath + '" WHERE userId = ' + user
+      console.log(query);
+      connection.query(query, function(err, rows, fields) {
+        if (err) console.log(err);
+        res.send(fullpath); //返回文件url绝对路径
+      });
 
     });
   });
@@ -308,6 +321,8 @@ function updateUp (req, res) {
     insert = 'DELETE FROM user_answer_up WHERE userId = ' + user + ' AND upAnswerId = ' + answerId
   }
   update = 'UPDATE answers SET upNum = ' + upNum + ' WHERE answerId = ' + answerId
+  console.log(insert);
+  console.log(update);
   connection.query(insert, function(err, rows, fields) {
     if (err) throw err;
     connection.query(update, function(err, rows, fields) {
@@ -325,11 +340,11 @@ function search (req, res) {
   var keyword = req.query.keyword
   var query
   if (type === 'content') {
-    query = 'SELECT answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date, upAnswerId FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN user_answer_up ON user_answer_up.upAnswerId = answers.answerId && user_answer_up.userId = ' + user + ' LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answers.answerText LIKE "%' + keyword + '%"'
+    query = 'SELECT answerId, answererId, userName, headline, answerText, questions.questionId, questionTitle, upNum, downNum, date, upAnswerId, followQuestion FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN user_answer_up ON user_answer_up.upAnswerId = answers.answerId && user_answer_up.userId = ' + user + ' LEFT JOIN questions ON answers.questionId = questions.questionId LEFT JOIN user_follow_question on questions.questionId = user_follow_question.questionId && user_follow_question.userId = ' + user + ' WHERE answers.answerText LIKE "%' + keyword + '%"'
   } else if (type === 'user') {
-    query = 'SELECT users.userId, userName, userImg, headline, friendship.friendId FROM users LEFT JOIN friendship ON users.userId = friendship.friendId && friendship.userId = ' + user + ' WHERE userName LIKE "%' + keyword + '%"'
+    query = 'SELECT users.userId, userName, userImg, headline, friendship.followFriend FROM users LEFT JOIN friendship ON users.userId = friendship.friendId && friendship.userId = ' + user + ' WHERE userName LIKE "%' + keyword + '%"'
   } else {
-    query = 'SELECT topicId, topicName, topicImg FROM topics WHERE topicName LIKE "%' + keyword + '%" OR topicDesc LIKE "%' + keyword + '%"' 
+    query = 'SELECT topics.topicId, topicName, topicImg, followTopic FROM topics LEFT JOIN user_topic_relationship ON topics.topicId = user_topic_relationship.topicId && user_topic_relationship.userId = '+ user + ' WHERE topicName LIKE "%' + keyword + '%" OR topicDesc LIKE "%' + keyword + '%"' 
   }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
@@ -342,11 +357,12 @@ function search (req, res) {
 function getUser (req, res) {
   // 用户近况
   var user = req.query.user
-  var questionId = req.query.questionId
+  var me = req.query.me
   var sqls = {
-    user: 'SELECT userName, userImg, gender, headline, description FROM users WHERE userId = "' + user + '"',
-    question: 'SELECT * FROM questions WHERE questionerId = "' + user + '" LIMIT 3',
-    answer: 'SELECT * FROM answers LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answererId = "' + user + '" LIMIT 3'
+    user: 'SELECT users.userId, userName, userImg, gender, headline, description, followFriend FROM users LEFT JOIN friendship ON users.userId = friendship.friendId && friendship.userId = ' + me + ' WHERE users.userId = ' + user,
+    friend: 'SELECT friendship.userId, friendId, userName, userImg, headline, friendship.followFriend FROM friendship LEFT JOIN users ON users.userId = friendship.friendId WHERE friendship.userId = ' + me,
+    question: 'SELECT * FROM questions WHERE questionerId = ' + user + ' LIMIT 3',
+    answer: 'SELECT answers.questionId, questionTitle, answers.answerId, answerText, upNum, date, upAnswerId, followQuestion FROM answers LEFT JOIN questions ON answers.questionId = questions.questionId LEFT JOIN user_answer_up ON answers.answerId = user_answer_up.upAnswerId && user_answer_up.userId = ' + me + ' LEFT JOIN user_follow_question ON answers.questionId = user_follow_question.questionId && user_follow_question.userId = '+ me + ' WHERE answererId = ' + user + ' LIMIT 3'
   }
   var data = {}
   async.forEachOf(sqls, function(value, key, callback) {
@@ -433,9 +449,15 @@ function question(req, res) {
 }
 
 function followUser (req, res) {
+  var type = req.query.type
   var user = req.query.user
   var friendId = req.query.friendId
-  var query = 'INSERT INTO friendship(userId, friendId) VALUE (' + user + ', ' + friendId + ')'
+  var query
+  if (type === 'follow') {
+    query = 'INSERT INTO friendship(userId, friendId, followFriend) VALUE (' + user + ', ' + friendId + ', 1)'
+  } else {
+    query = 'DELETE FROM friendship WHERE userId = ' + user + ' AND friendId = ' + friendId
+  }
   console.log(query);
   connection.query(query, function(err, rows, fields) {
     if (err) throw err;
@@ -456,17 +478,52 @@ function unfollowUser (req, res) {
   });
 }
 
+function getMessage (req, res) {
+  var user = req.query.user
+  var type = req.query.type
+  var query
+  if (type === 'answer') {
+    query = 'SELECT answerId, answererId, userName, answers.questionId, questionTitle, date FROM answers LEFT JOIN users ON answers.answererId = users.userId LEFT JOIN questions ON answers.questionId = questions.questionId WHERE answers.questionId IN (SELECT questionId FROM user_follow_question WHERE userId = ' + user + ') ORDER BY date LIMIT 20'
+  } else {
+    query = 'SELECT users.userId, userName FROM friendship LEFT JOIN users ON friendship.userId = users.userId WHERE friendId = ' + user + ' LIMIT 20'
+  }
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) throw err;
+    
+    res.send(rows)
+  });
+}
+
+function followQuestion (req, res) {
+  var type = req.query.type
+  var user = req.query.user
+  console.log(user);
+  var questionId = req.query.questionId
+  var query
+  if(type === 'follow') {
+    query = 'INSERT INTO user_follow_question(userId, questionId, followQuestion) VALUE (' + user + ', ' + questionId + ', 1)'
+  } else {
+    query = 'DELETE FROM user_follow_question WHERE userId = ' + user + ' AND questionId = ' + questionId
+  }
+  console.log(query);
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    
+    res.send(rows)
+  });
+}
+
 module.exports = function (app) {
   app.post('/signIn', signIn);
   app.post('/signUp', signUp);
   app.get('/queryUser', queryUser);
   app.post('/changeUserInfo', changeUserInfo);
-  app.post('/getTopic', getTopic);
+  app.get('/getTopic', getTopic);
   app.get('/getTopicCat', getTopicCat);
   // 话题下的问题
   app.get('/getTopicQuestion', getTopicQuestion);
-  app.post('/followTopic', followTopic);
-  app.post('/unfollowTopic', unfollowTopic);
+  app.get('/followTopic', followTopic);
   app.post('/getAnswer', getAnswer);
   // 问题详情页
   app.get('/getQuestion', getQuestion);
@@ -488,4 +545,6 @@ module.exports = function (app) {
   app.post('/question', question);
   app.get('/followUser', followUser);
   app.get('/unfollowUser', unfollowUser);
+  app.get('/getMessage', getMessage);
+  app.get('/followQuestion', followQuestion);
 };

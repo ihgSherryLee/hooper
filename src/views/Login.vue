@@ -63,8 +63,8 @@
     <div class="title">HOOPER</div>
     <div class="tab-nav">
       <div class="nav-slide">
-        <a href="#signup" class="active" @click="changeSignupTab">注册</a>
-        <a href="#signin" @click="changeSigninTab">登录</a>
+        <a href="#signup" :class="{'active':signup}" @click="changeSignupTab">注册</a>
+        <a :class="{'active':signin}" href="#signin" @click="changeSigninTab">登录</a>
       </div>
     </div>
     <div class="view view-signup" :class="{'selected': signup}">
@@ -77,8 +77,8 @@
     </div>
     <div class="view view-signin" :class="{'selected': signin}">
       <!-- <form class="signin-form"> -->
-        <input type="text" class="form-control" name="account" v-model="account" placeholder="手机号或邮箱">
-        <input type="password" class="form-control" v-model="password" placeholder="密码">
+        <input type="text" class="form-control input" name="account" v-model="account" placeholder="手机号或邮箱">
+        <input type="password" class="form-control input" v-model="password" placeholder="密码">
         <button class="sign-btn submit" @click="signIn">登录</button>
       <!-- </form> -->
     </div>
@@ -156,11 +156,13 @@
         data.email = self.email
         data.password = self.password
         Vue.http.post('/api/signUp', data).then(function (response) {
-          cookie.setCookie('account', data.account, 7)
+          cookie.setCookie('userId', response.data.userId, 7)
+          cookie.setCookie('hpemail', self.email, 7)
+          cookie.setCookie('hppassword', self.password, 7)
           self.$router.go({
             name: 'profile',
             params: {
-              userId: 10000
+              userId: response.data.userId
             }
           })
         }, function () {
@@ -170,21 +172,27 @@
       signIn: function () {
         var self = this
         var data = {}
-        data.account = self.account
+        data.email = self.account
         data.password = self.password
-        console.log(data)
         Vue.http.post('/api/signIn', data).then(function (response) {
           if (!response.data.status) {
             window.alert(response.data.tips)
           } else {
-            cookie.setCookie('account', data.account, 7)
+            cookie.setCookie('hpuserId', response.data.userId, 7)
+            cookie.setCookie('hpemail', self.account, 7)
+            cookie.setCookie('hppassword', self.password, 7)
             self.$router.go('/index')
           }
-          console.log(response)
         }, function () {
 
         })
       }
+    },
+    ready: function () {
+      var self = this
+      self.account = cookie.getCookie('hpemail')
+      self.password = cookie.getCookie('hppassword')
+      self.email = cookie.getCookie('hpemail')
     }
   }
 </script>

@@ -52,22 +52,6 @@
   .entry-body {
     position: relative;
     margin-top: 5px;
-    .vote {
-      position: absolute;
-      left: -48px;
-      display: none;
-      width: 40px;
-      .vote-count {
-        border: none;
-        border-radius: 2px;
-        background: rgba(204,91,91,0.4);
-        color: #d20000;
-      }
-      .vote-count:hover {
-        background: #d20000;
-        color: #fff;
-      }
-    }
     .votebar {
       float: left;
       margin-left: -48px;
@@ -77,8 +61,7 @@
         width: 40px;
         border: none;
         border-radius: 2px;
-        background: rgba(204,91,91,0.4);
-        color: #d20000;
+        background: #eff6fa;
         span {
           width: 100%;
         }
@@ -87,9 +70,16 @@
         width: 40px;
         border: none;
         border-radius: 2px;
-        background: #d20000;
+        background: #698ebf;
         color: #fff;
       }
+    }
+    .answer-deatail {
+      line-height: 25px;
+    }
+    .feed-meta {
+      margin-top: 10px;
+      color: #999;
     }
   }
   .author {
@@ -107,10 +97,10 @@
       <div class="news">最新动态</div>
       <div class="news-list-detail" v-for="item in items">
         <div class="avatar">
-          <a href="#"><img src="{{item.topicImg}}"></a>
+          <a v-link="{name:'topic',params:{topicId:item.topicId}}"><img :src="item.topicImg"></a>
         </div>
         <div class="feed-main">
-          <div class="source">来自<a <a href="#" v-link="{name:'topic',params:{topicId:item.topicId}}">{{item.topicName}}</a></div>
+          <div class="source">来自<a v-link="{name:'topic',params:{topicId:item.topicId}}">{{item.topicName}}</a></div>
           <div class="content">
             <h2><a href="#" v-link="{name:'question',params:{questionId:item.questionId}}">{{item.questionTitle}}</a></h2>
           </div>
@@ -120,7 +110,7 @@
             </div>
             <div class="answer-deatail">
               <div class="author">
-                <a href="#">{{item.userName}}</a>,啊啊啊啊
+                <a href="#" v-link="{name:'user',params:{userId:item.answererId}}">{{item.userName}}</a><span v-if="item.headline">,{{item.headline}}</span>
               </div>
               <div class="answer">
                 {{{item.answerText}}}
@@ -129,14 +119,15 @@
             <div class="feed-meta">
               <div class="meta-panel">
                 <span class="answer-date">发布于 {{item.date}}</span>
-                <a href="#">关注问题</a>
-                <a href="#">评论</a>
+                <a v-if="!item.followQuestion" @click="followQuestion($index, item.questionId, item.followQuestion)" href="#">关注问题</a>
+                <a v-else @click="followQuestion($index, item.questionId, item.followQuestion)" href="#">取消关注</a>
                 <a href="#">收起</a>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <button class="more">加载更多</button>
     </div>
   </div>
 </template>
@@ -147,26 +138,37 @@
   module.exports = {
     data: function () {
       return {
+        userId: '',
         items: []
       }
     },
     methods: {
       update: function (index, answerId, upAnswerId) {
         var self = this
-        var user = 10000
-        console.log(upAnswerId)
         if (!upAnswerId) {
-          Vue.http.get('/api/updateUp?user=' + user + '&type=up&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
+          Vue.http.get('/api/updateUp?user=' + self.userId + '&type=up&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
             self.items[index].upNum++
             self.items[index].upAnswerId = true
-            console.log(self.items)
           }, function () {
           })
         } else {
-          Vue.http.get('/api/updateUp?user=' + user + '&type=down&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
+          Vue.http.get('/api/updateUp?user=' + self.userId + '&type=down&answerId=' + answerId + '&upNum=' + self.items[index].upNum).then(function (response) {
             self.items[index].upNum--
             self.items[index].upAnswerId = false
-            console.log(self.items)
+          }, function () {
+          })
+        }
+      },
+      followQuestion: function (index, questionId, follow) {
+        var self = this
+        if (!follow) {
+          Vue.http.get('/api/followQuestion?user=' + self.userId + '&type=follow&questionId=' + questionId).then(function (response) {
+            self.items[index].followQuestion = 1
+          }, function () {
+          })
+        } else {
+          Vue.http.get('/api/followQuestion?user=' + self.userId + '&type=unfollow&questionId=' + questionId).then(function (response) {
+            self.items[index].followQuestion = 0
           }, function () {
           })
         }
@@ -174,11 +176,10 @@
     },
     ready: function () {
       var self = this
-      var account = cookie.getCookie('account')
-      console.log(account)
-      Vue.http.get('/api/getIndex?user=10000').then(function (response) {
+      var userId = cookie.getCookie('hpuserId')
+      self.userId = userId
+      Vue.http.get('/api/getIndex?user=' + userId).then(function (response) {
         self.items = response.data
-        console.log(self.items)
       }, function () {
       })
     }

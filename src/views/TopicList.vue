@@ -60,12 +60,12 @@
       <div class="topic-list">
         <div class="topic-item" v-for="item in topics">
           <a v-link="{name: 'topic', params: {topicId: item.topicId}}">
-            <img src="{{item.topicImg}}" alt="">
+            <img :src="item.topicImg" alt="">
             <strong>{{item.topicName}}</strong>
           </a>
           <p>{{item.description}}</p>
-          <a v-if="!item.userId" class="follow" href="#" @click="follow($index,item.topicId)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
-          <a v-else class="follow" href="#" @click="unfollow($index, item.topicId)">取消关注</a>
+          <a v-if="!item.followTopic" class="follow" href="#" @click="followTopic($index,item.topicId,item.followTopic)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>关注</a>
+          <a v-else class="follow" href="#" @click="followTopic($index, item.topicId,item.followTopic)">取消关注</a>
         </div>
       </div>
     </div>
@@ -79,41 +79,31 @@
   module.exports = {
     data: function () {
       return {
+        userId: '',
         topicCats: [],
         topics: []
       }
     },
     methods: {
-      follow: function (index, topic) {
+      followTopic: function (index, topicId, follow) {
         var self = this
-        var data = {}
-        console.log(index)
-        data.topicId = topic
-        self.topics[index].userId = true
-        Vue.http.post('/api/followTopic', data).then(function (response) {
-          console.log(response.data)
-          self.topics[index].userId = true
-        }, function () {
-        })
-      },
-      unfollow: function (index, topic) {
-        var self = this
-        var data = {}
-        data.topicId = topic
-        self.topics[index].userId = null
-        Vue.http.post('/api/unfollowTopic', data).then(function (response) {
-          console.log(response.data)
-          self.topics[index].userId = null
-        }, function () {
-        })
+        var user = self.userId
+        if (!follow) {
+          Vue.http.get('/api/followTopic?user=' + user + '&type=follow&topicId=' + topicId).then(function (response) {
+            self.topics[index].followTopic = 1
+          }, function () {
+          })
+        } else {
+          Vue.http.get('/api/followTopic?user=' + user + '&type=unfollow&topicId=' + topicId).then(function (response) {
+            self.topics[index].followTopic = 0
+          }, function () {
+          })
+        }
       },
       showTopic: function (topicCat) {
         var self = this
-        var data = {}
-        data.topicCat = topicCat
-        Vue.http.post('/api/getTopic', data).then(function (response) {
-          console.log(response.data)
-          self.topics = response.data.data
+        Vue.http.get('/api/getTopic?user=' + self.userId + '&topicCat=' + topicCat).then(function (response) {
+          self.topics = response.data
         }, function () {
         })
       }
@@ -123,13 +113,10 @@
     },
     ready: function () {
       var self = this
-      var account = cookie.getCookie('account')
-      var data = {}
-      data.account = account
-      console.log(account)
+      var userId = cookie.getCookie('userId')
+      self.userId = userId
       Vue.http.get('/api/getTopicCat').then(function (response) {
-        console.log(response.data)
-        self.topicCats = response.data.data
+        self.topicCats = response.data
       }, function () {
       })
       self.showTopic('篮球')
